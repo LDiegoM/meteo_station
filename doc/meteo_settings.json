@@ -1,0 +1,23 @@
+{
+    "mqtt":{
+        "server": "your_mqtt_server_dns_address",
+        "port": 1234,
+        "username": "your_awesome_mqtt_service_username",
+        "password": "your_awesome_mqtt_service_password",
+        "crt_path": "/mqtt_ca_root.crt",
+        "send_period_seconds": 3600
+    },
+    "wifi":[
+        {"ssid": "wifi_ap1_ssid", "password": "wifi_ap1_password"},
+        {"ssid": "wifi_ap2_ssid", "password": "wifi_ap2_password"}
+    ],
+    "storage":{
+        "output_path": "/meteo_data.txt",
+        "write_period_seconds": 1800
+    },
+    "date_time":{
+        "server": "pool.ntp.org",
+        "gmt_offset": -3,
+        "daylight_offset": 0
+    }
+}
