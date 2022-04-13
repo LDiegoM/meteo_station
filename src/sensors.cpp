@@ -23,16 +23,13 @@ bool Sensors::begin() {
     Timer *timeOut = new Timer(10 * 1000);
     timeOut->start();
 
-    m_tft->fillScreen(BLACK);
-    m_tft->setTextColor(WHITE);
-    int line = 0;
-    m_tft->setCursor(2, 20 * ++line);
+    m_tft->setCursor(2, m_tft->getCursorY() + 20);
     m_tft->print("Start sensor");
 
     m_dhtSensor->begin();
     while (!m_bmpSensor->begin()) {
         if (timeOut->isTime()) {
-            m_tft->setCursor(2, 20 * ++line);
+            m_tft->setCursor(2, m_tft->getCursorY() + 20);
             m_tft->print("Sensor error");
             timeOut->stop();
             free(timeOut);
@@ -41,7 +38,7 @@ bool Sensors::begin() {
         }
     }
 
-    m_tft->setCursor(2, 20 * ++line);
+    m_tft->setCursor(2, m_tft->getCursorY() + 20);
     m_tft->print("Sensor OK");
     timeOut->stop();
     free(timeOut);

@@ -1,13 +1,28 @@
 #include <settings.h>
 
 //////////////////// Constructor
-Settings::Settings(Storage *storage) {
+Settings::Settings(Storage *storage, TFT_ILI9163C *tft) {
     m_storage = storage;
     m_settingsOK = false;
-    readSettings();
+    m_tft = tft;
 }
 
 //////////////////// Public methods implementation
+bool Settings::begin() {
+    m_tft->setCursor(2, m_tft->getCursorY() + 20);
+    m_tft->print("Read settings");
+
+    m_settingsOK = readSettings();
+    if (!m_settingsOK)
+        return false;
+    
+    m_tft->setCursor(2, m_tft->getCursorY() + 20);
+    m_tft->print("Settings OK");
+    delay(1000);
+
+    return true;
+}
+
 bool Settings::isSettingsOK() {
     return m_settingsOK;
 }
@@ -17,14 +32,16 @@ Settings::settings Settings::getSettings() {
 }
 
 //////////////////// Private methods implementation
-void Settings::readSettings() {
+bool Settings::readSettings() {
     StaticJsonDocument<1024> configs;
     char *settingsJson = m_storage->readAll(SETTINGS_FILE);
     DeserializationError error = deserializeJson(configs, settingsJson);
     if (error) {
         Serial.print(F("deserializeJson() failed: "));
         Serial.println(error.f_str());
-        return;
+        m_tft->setCursor(2, m_tft->getCursorY() + 20);
+        m_tft->print("Bad JSON");
+        return false;
     }
     JsonObject jsonObj = configs.as<JsonObject>();
 
@@ -53,5 +70,5 @@ void Settings::readSettings() {
     m_settings.dateTime.daylightOffset = jsonObj["date_time"]["daylight_offset"].as<int>();
 
     // TODO: Validate parameters
-    m_settingsOK = true;
+    return true;
 }

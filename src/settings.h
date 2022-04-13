@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <ArduinoJson.h>
+#include <TFT_ILI9163C.h>
 #include <storage.h>
 
 class Settings {
@@ -34,12 +35,14 @@ class Settings {
         Storage *m_storage;
         settings m_settings;
         bool m_settingsOK;
+        TFT_ILI9163C *m_tft;
 
-        void readSettings();
+        bool readSettings();
 
     public:
-        Settings(Storage *storage);
+        Settings(Storage *storage, TFT_ILI9163C *tft);
 
+        bool begin();
         bool isSettingsOK();
         settings getSettings();
 };

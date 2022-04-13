@@ -226,14 +226,25 @@ void setup(void) {
     tft = new TFT_ILI9163C(TFT_CS, TFT_DC);
     tft->begin();
     tft->setFont(&FreeSans9pt7b);
+    tft->fillScreen(BLACK);
+    tft->setTextColor(WHITE);
+    tft->setCursor(2, 0);
 
     sensors = new Sensors(DHTPIN, DHTTYPE, tft);
-    while (!sensors->begin()) {}
+    while (!sensors->begin()) {
+        tft->fillScreen(BLACK);
+        tft->setTextColor(WHITE);
+        tft->setCursor(2, 0);
+    }
 
     storage = new Storage(SD_CS, tft);
-    while (!storage->begin()) {}
-    settings = new Settings(storage);
-    if (!settings->isSettingsOK()) {
+    while (!storage->begin()) {
+        tft->fillScreen(BLACK);
+        tft->setTextColor(WHITE);
+        tft->setCursor(2, 0);
+    }
+    settings = new Settings(storage, tft);
+    if (!settings->begin()) {
         Serial.println("Settings are not ok");
         return;
     }

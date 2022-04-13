@@ -11,16 +11,13 @@ bool Storage::begin() {
     Timer *timeOut = new Timer(10 * 1000);
     timeOut->start();
 
-    m_tft->fillScreen(BLACK);
-    m_tft->setTextColor(WHITE);
-    int line = 0;
-    m_tft->setCursor(2, 20 * ++line);
+    m_tft->setCursor(2, m_tft->getCursorY() + 20);
     m_tft->print("Mounting SD");
 
     // Initialize SD card
     while(!SD.begin(m_sdCsPin)) {
         if (timeOut->isTime()) {
-            m_tft->setCursor(2, 20 * ++line);
+            m_tft->setCursor(2, m_tft->getCursorY() + 20);
             m_tft->print("Insert SD");
             timeOut->stop();
             free(timeOut);
@@ -29,7 +26,7 @@ bool Storage::begin() {
         }
     }
     if (SD.cardType() == CARD_NONE) {
-        m_tft->setCursor(2, 20 * ++line);
+        m_tft->setCursor(2, m_tft->getCursorY() + 20);
         m_tft->print("Insert SD");
         timeOut->stop();
         free(timeOut);
@@ -38,7 +35,7 @@ bool Storage::begin() {
         return false;
     }
 
-    m_tft->setCursor(2, 20 * ++line);
+    m_tft->setCursor(2, m_tft->getCursorY() + 20);
     m_tft->print("SD mount OK");
     m_fs = &SD;
     timeOut->stop();
