@@ -258,7 +258,7 @@ void setup(void) {
     mqttClient.setCallback(messageReceived);
     connectMQTT();
 
-    Serial.println("Setup end");
+    tmrSendValuesToMQTT->start();
 }
 
 void loop() {

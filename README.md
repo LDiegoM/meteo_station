@@ -20,7 +20,7 @@ Topics list:
 
 WIP: Meteo station future version will log measures in the microSD card, in the file `/meteo_data.txt`.
 
-Meteo staging listen from the topic `topic-meteo-cmd` to receive the following commands:
+Meteo station listen from the topic `topic-meteo-cmd` to receive the following commands:
 - `RESEND`: when this command is received, tha pplication will send current measures to MQTT topics.
 
 Meteo station shows information in a 128x128 pixels display, in this format:
