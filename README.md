@@ -43,8 +43,14 @@ Name: `/meteo_settings.json`
         "send_period_seconds": 3600
     },
     "wifi":[
-        {"ssid": "wifi_ap1_ssid", "password": "wifi_ap1_password"},
-        {"ssid": "wifi_ap2_ssid", "password": "wifi_ap2_password"}
+        {
+            "ssid": "wifi_ap1_ssid",
+            "password": "wifi_ap1_password"
+        },
+        {
+            "ssid": "wifi_ap2_ssid",
+            "password": "wifi_ap2_password"
+        }
     ],
     "storage":{
         "output_path": "/meteo_data.txt",
@@ -63,6 +69,10 @@ Name: `/meteo_settings.json`
 - Main idea, development and functional prototype by Diego M. Lopez (ldiegom@gmail.com)
 
 # Changelog
+
+## 0.0.2 - 2022-04-14
+
+- Add feature to create new wifi AP in settings and save it.
 
 ## 0.0.1 - 2022-04-11
 

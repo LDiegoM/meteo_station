@@ -17,7 +17,8 @@ class Storage {
 
         bool begin();
         char* readAll(const char *path);
-        void writeFile(const char *path, const char *message);
+        bool writeFile(const char *path, const char *message);
+        bool deleteFile(const char *path);
 };
 
 #endif

@@ -38,6 +38,7 @@ class Settings {
         TFT_ILI9163C *m_tft;
 
         bool readSettings();
+        String createJson();
 
     public:
         Settings(Storage *storage, TFT_ILI9163C *tft);
@@ -45,6 +46,8 @@ class Settings {
         bool begin();
         bool isSettingsOK();
         settings getSettings();
+        bool saveSettings();
+        void addWifiAP(const char* ssid, const char* password);
 };
 
 #endif

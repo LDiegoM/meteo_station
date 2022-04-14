@@ -66,20 +66,23 @@ char* Storage::readAll(const char *path) {
 }
 
 // Write to the SD card
-void Storage::writeFile(const char *path, const char *message) {
-    Serial.printf("Writing file: %s\n", path);
-
+bool Storage::writeFile(const char *path, const char *message) {
     File file = m_fs->open(path, FILE_APPEND);
     if (!file) {
         Serial.println("Failed to open file for writing");
-        return;
+        return false;
     }
     delay(100);
 
-    if (file.print(message)) {
-        Serial.println("File written");
-    } else {
-        Serial.println("Write failed");
-    }
+    bool flgOk = false;
+    if (file.print(message))
+        flgOk = true;
+
     file.close();
+
+    return flgOk;
+}
+
+bool Storage::deleteFile(const char *path) {
+    return m_fs->remove(path);
 }
