@@ -31,6 +31,23 @@ Settings::settings Settings::getSettings() {
     return m_settings;
 }
 
+bool Settings::saveSettings() {
+    m_storage->deleteFile(SETTINGS_FILE);
+    String json = createJson();
+    if (json.equals(""))
+        return false;
+    
+    return m_storage->writeFile(SETTINGS_FILE, json.c_str());
+}
+
+void Settings::addWifiAP(const char* ssid, const char* password) {
+    wifiAP ap = {
+        ssid: ssid,
+        password: password
+    };
+    m_settings.wifiAPs.push_back(ap);
+}
+
 //////////////////// Private methods implementation
 bool Settings::readSettings() {
     StaticJsonDocument<1024> configs;
@@ -71,4 +88,37 @@ bool Settings::readSettings() {
 
     // TODO: Validate parameters
     return true;
+}
+
+String Settings::createJson() {
+    StaticJsonDocument<1024> doc;
+
+    JsonObject mqttObj = doc.createNestedObject("mqtt");
+    mqttObj["server"] = m_settings.mqtt.server;
+    mqttObj["port"] = m_settings.mqtt.port;
+    mqttObj["username"] = m_settings.mqtt.username;
+    mqttObj["password"] = m_settings.mqtt.password;
+    mqttObj["crt_path"] = m_settings.mqtt.caCertPath;
+    mqttObj["send_period_seconds"] = m_settings.mqtt.sendPeriod;
+
+    JsonArray wifiArr = doc.createNestedArray("wifi");
+    for (size_t i = 0; i < m_settings.wifiAPs.size(); i++) {
+        JsonObject wifiAP = wifiArr.createNestedObject();
+        wifiAP["ssid"] = m_settings.wifiAPs[i].ssid;
+        wifiAP["password"] = m_settings.wifiAPs[i].password;
+    }
+
+    JsonObject storageObj = doc.createNestedObject("storage");
+    storageObj["output_path"] = m_settings.storage.outputPath;
+    storageObj["write_period_seconds"] = m_settings.storage.writePeriod;
+
+    JsonObject dateTimeObj = doc.createNestedObject("date_time");
+    dateTimeObj["server"] = m_settings.dateTime.server;
+    dateTimeObj["gmt_offset"] = m_settings.dateTime.gmtOffset;
+    dateTimeObj["daylight_offset"] = m_settings.dateTime.daylightOffset;
+
+    String json;
+    serializeJsonPretty(doc, json);
+
+    return json;
 }
