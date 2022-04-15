@@ -70,6 +70,10 @@ Name: `/meteo_settings.json`
 
 # Changelog
 
+## 0.0.3 - 2022-04-14
+
+- Refactor mqtt and wifi abstractions.
+
 ## 0.0.2 - 2022-04-14
 
 - Add feature to create new wifi AP in settings and save it.
