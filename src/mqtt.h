@@ -5,6 +5,7 @@
 #include <wifi_connection.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
+#include <ArduinoJson.h>
 #include <timer.h>
 #include <sensors.h>
 #include <settings.h>
@@ -22,15 +23,29 @@ class MQTT {
 
         bool m_connected;
         Timer *m_tmrSendValuesToMQTT, *m_tmrConnectMQTT;
-        const char* MQTT_TEMP_TOPIC = "topic-meteo-temp";
-        const char* MQTT_TEMP_TOPIC2 = "topic-meteo-temp2";
-        const char* MQTT_PRES_TOPIC = "topic-meteo-pres";
-        const char* MQTT_HUMI_TOPIC = "topic-meteo-humi";
-        const char* MQTT_CMD_TOPIC = "topic-meteo-cmd";
+        const char* MQTT_TOPIC_TEMP = "topic-meteo-temp";
+        const char* MQTT_TOPIC_TEMP2 = "topic-meteo-temp2";
+        const char* MQTT_TOPIC_PRES = "topic-meteo-pres";
+        const char* MQTT_TOPIC_HUMI = "topic-meteo-humi";
+        const char* MQTT_TOPIC_CMD = "topic-meteo-cmd";
+        const char* MQTT_TOPIC_RES_IP = "topic-meteo-res-ip";
+        const char* MQTT_TOPIC_RES_AP_SSID = "topic-meteo-res-ap-ssid";
+        const char* MQTT_TOPIC_RES_AP_PASS = "topic-meteo-res-ap-pass";
+        const char* MQTT_TOPIC_RES_AP_SAVE = "topic-meteo-res-ap-save";
 
         MQTT_CALLBACK_SIGNATURE;
 
+        struct command {
+            String cmd, value;
+        } m_command;
+
+        struct wifiAP {
+            String ssid, password;
+        } m_new_wifiAP;
+
         void sendValuesToMQTT();
+        String commandToJSON();
+        bool jsonToCommand(String json);
 
     public:
         MQTT(WiFiConnection *wifi, Sensors *sensors, Settings *settings, TFT_ILI9163C *tft, MQTT_CALLBACK_SIGNATURE);

@@ -59,7 +59,7 @@ bool MQTT::connect() {
         m_tft->print("FAIL");
         return false;
     }
-    m_mqttClient->subscribe(MQTT_CMD_TOPIC);
+    m_mqttClient->subscribe(MQTT_TOPIC_CMD);
     m_tft->print("OK");
     m_tmrConnectMQTT->stop();
     m_connected = true;
@@ -100,7 +100,7 @@ void MQTT::loop() {
 
 void MQTT::processReceivedMessage(char* topic, uint8_t* payload, unsigned int length) {
     Serial.println("Message received from topic " + String(topic) + " - length: " + String(length));
-    if (!String(topic).equals(MQTT_CMD_TOPIC))
+    if (!String(topic).equals(MQTT_TOPIC_CMD))
         return;
     
     String incomingMessage = "";
@@ -108,8 +108,42 @@ void MQTT::processReceivedMessage(char* topic, uint8_t* payload, unsigned int le
         incomingMessage += (char)payload[i];
     
     Serial.println("incomingMessage: " + incomingMessage);
-    if (incomingMessage.equals("RESEND")) {
+    if (!jsonToCommand(incomingMessage)) {
+        return;
+    }
+
+    if (m_command.cmd.equals("RESEND")) {
         sendValuesToMQTT();
+    } else if (m_command.cmd.equals("GET_IP")) {
+        m_mqttClient->publish(MQTT_TOPIC_RES_IP, m_wifi->getIP().c_str(), false);
+    } else if (m_command.cmd.equals("SET_AP_SSID")) {
+        if (m_command.value.equals("")) {
+            m_new_wifiAP.ssid = "";
+            m_mqttClient->publish(MQTT_TOPIC_RES_AP_SSID, "ERROR: empty ssid", false);
+        } else {
+            if (m_settings->ssidExists(m_command.value)) {
+                m_new_wifiAP.ssid = "";
+                m_mqttClient->publish(MQTT_TOPIC_RES_AP_SSID, "ERROR: ssid exists", false);
+            } else {
+                m_new_wifiAP.ssid = m_command.value;
+                m_mqttClient->publish(MQTT_TOPIC_RES_AP_SSID, "OK", false);
+            }
+        }
+    } else if (m_command.cmd.equals("SET_AP_PASS")) {
+        m_new_wifiAP.password = m_command.value;
+        m_mqttClient->publish(MQTT_TOPIC_RES_AP_PASS, "OK", false);
+    } else if (m_command.cmd.equals("SET_AP_SAVE")) {
+        if (m_new_wifiAP.ssid.equals(""))
+            m_mqttClient->publish(MQTT_TOPIC_RES_AP_SAVE, "ERROR: empty ssid", false);
+        else {
+            m_settings->addWifiAP(m_new_wifiAP.ssid.c_str(), m_new_wifiAP.password.c_str());
+            if (m_settings->saveSettings())
+                m_mqttClient->publish(MQTT_TOPIC_RES_AP_SAVE, "OK", false);
+            else
+                m_mqttClient->publish(MQTT_TOPIC_RES_AP_SAVE, "ERROR: fail to save", false);
+            m_new_wifiAP.ssid = "";
+            m_new_wifiAP.password = "";
+        }
     }
 }
 
@@ -123,8 +157,34 @@ void MQTT::sendValuesToMQTT() {
         return;
     }
     
-    m_mqttClient->publish(MQTT_TEMP_TOPIC, String(m_sensors->temp()).c_str(), true);
-    m_mqttClient->publish(MQTT_TEMP_TOPIC2, String(m_sensors->temp2()).c_str(), true);
-    m_mqttClient->publish(MQTT_PRES_TOPIC, String(m_sensors->pres()).c_str(), true);
-    m_mqttClient->publish(MQTT_HUMI_TOPIC, String(m_sensors->humi()).c_str(), true);
+    m_mqttClient->publish(MQTT_TOPIC_TEMP, String(m_sensors->temp()).c_str(), true);
+    m_mqttClient->publish(MQTT_TOPIC_TEMP2, String(m_sensors->temp2()).c_str(), true);
+    m_mqttClient->publish(MQTT_TOPIC_PRES, String(m_sensors->pres()).c_str(), true);
+    m_mqttClient->publish(MQTT_TOPIC_HUMI, String(m_sensors->humi()).c_str(), true);
+}
+
+String MQTT::commandToJSON() {
+    StaticJsonDocument<200> doc;
+    doc["cmd"] = m_command.cmd;
+    doc["value"] = m_command.value;
+
+    String json;
+    serializeJsonPretty(doc, json);
+
+    return json;
+}
+
+bool MQTT::jsonToCommand(String json) {
+    StaticJsonDocument<200> doc;
+    DeserializationError error = deserializeJson(doc, json.c_str());
+    if (error) {
+        Serial.print(F("deserializeJson() failed: "));
+        Serial.println(error.f_str());
+        return false;
+    }
+
+    JsonObject jsonObj = doc.as<JsonObject>();
+    m_command.cmd = jsonObj["cmd"].as<String>();
+    m_command.value = jsonObj["value"].as<String>();
+    return true;
 }

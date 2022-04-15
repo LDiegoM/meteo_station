@@ -16,6 +16,7 @@ class WiFiConnection {
         bool begin();
         bool connect();
         bool isConnected();
+        String getIP();
 };
 
 #endif

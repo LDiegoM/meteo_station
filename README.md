@@ -20,9 +20,6 @@ Topics list:
 
 WIP: Meteo station future version will log measures in the microSD card, in the file `/meteo_data.txt`.
 
-Meteo station listen from the topic `topic-meteo-cmd` to receive the following commands:
-- `RESEND`: when this command is received, tha pplication will send current measures to MQTT topics.
-
 Meteo station shows information in a 128x128 pixels display, in this format:
 
 ![Screen](./doc/Screen_design.png)
@@ -64,11 +61,30 @@ Name: `/meteo_settings.json`
 }
 ```
 
-# Authors
+Meteo station listens from the topic `topic-meteo-cmd` to receive different commands using the following json format:
+```json
+{
+    "cmd": "command-type",
+    "value": "some-value"
+}
+```
+
+Theese are the available commands:
+- `RESEND`: when this command is received (value fueld doesn't matters), the aplication will send current measures to MQTT topics.
+- `GET_IP`: value field doesn't matters. The application will publish current local IP to topic `topic-meteo-res-ip`.
+- `SET_AP_SSID`: value field should be the ssid of the wifi AP to add to settings. The application will publish `OK` or `ERROR: message` to the topic `topic-meteo-res-ap-ssid`. SSID should not be empty nor currently present in settings-
+- `SET_AP_PASS`: value field should be the password of the wifi AP to add to settings. The application will publish `OK` or `ERROR: message` to the topic `topic-meteo-res-ap-pass`. Password could be empty.
+- `SET_AP_SAVE`: value field doesn't matters. The application will save the new wifi AP with given ssid and password using `SET_AP_SSID` and `SET_AP_PASS` commands, and publish `OK` or `ERROR: message` to the topic `topic-meteo-res-ap-save`.
+
+# Author
 
 - Main idea, development and functional prototype by Diego M. Lopez (ldiegom@gmail.com)
 
 # Changelog
+
+## 0.0.4 - 2022-04-15
+
+- Add commands to return local IP and create new wifi AP.
 
 ## 0.0.3 - 2022-04-14
 
