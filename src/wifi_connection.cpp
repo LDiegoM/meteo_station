@@ -1,5 +1,6 @@
 #include <wifi_connection.h>
 
+//////////////////// Constructor
 WiFiConnection::WiFiConnection(Settings *settings, TFT_ILI9163C *tft) {
     m_settings = settings;
     m_tft = tft;
@@ -7,6 +8,7 @@ WiFiConnection::WiFiConnection(Settings *settings, TFT_ILI9163C *tft) {
     m_wifiMulti = new WiFiMulti();
 }
 
+//////////////////// Public methods implementation
 bool WiFiConnection::begin() {
     if (!m_settings->isSettingsOK())
         return false;
@@ -38,4 +40,11 @@ bool WiFiConnection::connect() {
 
 bool WiFiConnection::isConnected() {
     return WiFi.status() == WL_CONNECTED;
+}
+
+String WiFiConnection::getIP() {
+    if (!isConnected())
+        return "";
+    
+    return WiFi.localIP().toString();
 }

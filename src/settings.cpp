@@ -48,6 +48,14 @@ void Settings::addWifiAP(const char* ssid, const char* password) {
     m_settings.wifiAPs.push_back(ap);
 }
 
+bool Settings::ssidExists(String ssid) {
+    for (int i = 0; i < m_settings.wifiAPs.size(); i++) {
+        if (m_settings.wifiAPs[i].ssid.equalsIgnoreCase(ssid))
+            return true;
+    }
+    return false;
+}
+
 //////////////////// Private methods implementation
 bool Settings::readSettings() {
     StaticJsonDocument<1024> configs;
