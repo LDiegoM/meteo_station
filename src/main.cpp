@@ -64,7 +64,7 @@ void printDateTime() {
         return;
     }
 
-    char year[4], month[3], day[3], hour[3], minutes[3];
+    char year[5], month[3], day[3], hour[3], minutes[3];
     strftime(year, 5, "%Y", &timeInfo);
     strftime(month, 3, "%m", &timeInfo);
     strftime(day, 3, "%d", &timeInfo);
@@ -122,6 +122,7 @@ void messageReceived(char* topic, uint8_t* payload, unsigned int length) {
 
 void setup(void) {
     Serial.begin(9600);
+    Serial.println("begin setup - " + String(ESP.getFreeHeap()));
 
     tft = new TFT_ILI9163C(TFT_CS, TFT_DC);
     tft->begin();
@@ -179,6 +180,8 @@ void setup(void) {
 
     tmrRefreshTime->start();
     tmrShowPres->start();
+
+    Serial.println("end setup - " + String(ESP.getFreeHeap()));
 }
 
 void loop() {

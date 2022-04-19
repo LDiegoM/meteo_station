@@ -19,9 +19,9 @@ NumberSet::NumberSet(TFT_ILI9163C* tft, uint8_t x, uint8_t y, uint8_t format,
     this->m_fontColor = fontColor;
     this->m_unsigned = this->m_format == NS_HHMM || this->m_format == NS_UINT || this->m_format == NS_UFLT;
 
-    this->m_signWidth = SIZES[this->m_size - 1].signWidth;
-    this->m_numberHeight = SIZES[this->m_size - 1].numberHeight;
-    this->m_numberWidth = SIZES[this->m_size - 1].numberWidth;
+    this->m_signWidth = NSET_SIZES[this->m_size - 1].signWidth;
+    this->m_numberHeight = NSET_SIZES[this->m_size - 1].numberHeight;
+    this->m_numberWidth = NSET_SIZES[this->m_size - 1].numberWidth;
 
     this->resetChars();
     this->resetPrevChars();
@@ -40,7 +40,7 @@ uint8_t NumberSet::y() {
 }
 
 uint8_t NumberSet::height() {
-    return MARGIN_SIZE + this->m_numberHeight + MARGIN_SIZE;
+    return NSET_MARGIN_SIZE + this->m_numberHeight + NSET_MARGIN_SIZE;
 }
 
 uint8_t NumberSet::width() {
@@ -52,7 +52,7 @@ uint8_t NumberSet::width() {
     if (this->m_format == NS_HHMM || this->m_format == NS_UFLT || this->m_format == NS_SFLT)
         punctuationWidth = this->m_size + this->m_size;
 
-    return MARGIN_SIZE + signWidth + punctuationWidth + ((this->m_numberWidth + this->m_size) * 4) - this->m_size + MARGIN_SIZE;
+    return NSET_MARGIN_SIZE + signWidth + punctuationWidth + ((this->m_numberWidth + this->m_size) * 4) - this->m_size + NSET_MARGIN_SIZE;
 }
 
 void NumberSet::setValue(float number) {
@@ -152,7 +152,7 @@ bool NumberSet::isValidNumber(String number) {
     if (number.length() < 4 || number.length() > 6)
         return false;
     
-    return std::regex_match(std::string(number.c_str()), REG_EXPR[this->m_format]);
+    return std::regex_match(std::string(number.c_str()), NSET_REG_EXPR[this->m_format]);
 }
 
 bool NumberSet::charsChanged() {
@@ -169,7 +169,7 @@ void NumberSet::setPreviousChars() {
 }
 
 void NumberSet::printSign(uint16_t color) {
-    uint8_t x = this->m_x + MARGIN_SIZE;
+    uint8_t x = this->m_x + NSET_MARGIN_SIZE;
     uint8_t y = this->m_y + ((this->height() - this->m_size) / 2);
     switch (this->m_size) {
         case 1:
@@ -189,7 +189,7 @@ void NumberSet::printSign(uint16_t color) {
 void NumberSet::printChars() {
     uint8_t c = 0;
 
-    uint8_t x = this->m_x + MARGIN_SIZE;
+    uint8_t x = this->m_x + NSET_MARGIN_SIZE;
     if (!this->m_unsigned) {
         // Add sign width and it's margin
         x += this->m_signWidth + this->m_size;
@@ -219,18 +219,18 @@ void NumberSet::printChars() {
 }
 
 void NumberSet::printNumber(uint8_t number, uint8_t x) {
-    this->printSideA(x, (DIGITS[number][0] == 1 ? this->m_fontColor : this->m_background));
-    this->printSideB(x, (DIGITS[number][1] == 1 ? this->m_fontColor : this->m_background));
-    this->printSideC(x, (DIGITS[number][2] == 1 ? this->m_fontColor : this->m_background));
-    this->printSideD(x, (DIGITS[number][3] == 1 ? this->m_fontColor : this->m_background));
-    this->printSideE(x, (DIGITS[number][4] == 1 ? this->m_fontColor : this->m_background));
-    this->printSideF(x, (DIGITS[number][5] == 1 ? this->m_fontColor : this->m_background));
-    this->printSideG(x, (DIGITS[number][6] == 1 ? this->m_fontColor : this->m_background));
+    this->printSideA(x, (NSET_DIGITS[number][0] == 1 ? this->m_fontColor : this->m_background));
+    this->printSideB(x, (NSET_DIGITS[number][1] == 1 ? this->m_fontColor : this->m_background));
+    this->printSideC(x, (NSET_DIGITS[number][2] == 1 ? this->m_fontColor : this->m_background));
+    this->printSideD(x, (NSET_DIGITS[number][3] == 1 ? this->m_fontColor : this->m_background));
+    this->printSideE(x, (NSET_DIGITS[number][4] == 1 ? this->m_fontColor : this->m_background));
+    this->printSideF(x, (NSET_DIGITS[number][5] == 1 ? this->m_fontColor : this->m_background));
+    this->printSideG(x, (NSET_DIGITS[number][6] == 1 ? this->m_fontColor : this->m_background));
 }
 
 void NumberSet::printErr() {
     this->m_tft->fillRect(this->m_x, this->m_y, this->width(), this->height(), this->m_background);
-    uint8_t x = this->m_x + MARGIN_SIZE;
+    uint8_t x = this->m_x + NSET_MARGIN_SIZE;
     this->printSideA(x, this->m_fontColor);
     this->printSideD(x, this->m_fontColor);
     this->printSideE(x, this->m_fontColor);
@@ -247,7 +247,7 @@ void NumberSet::printErr() {
 }
 
 void NumberSet::printSideA(uint8_t x, uint16_t color) {
-    uint8_t y = this->m_y + MARGIN_SIZE;
+    uint8_t y = this->m_y + NSET_MARGIN_SIZE;
     uint8_t numberWidth = this->m_numberWidth;
 
     for (uint8_t line = 1; line <= this->m_size; line++)
@@ -255,7 +255,7 @@ void NumberSet::printSideA(uint8_t x, uint16_t color) {
 }
 
 void NumberSet::printSideB(uint8_t x, uint16_t color) {
-    uint8_t y = this->m_y + MARGIN_SIZE;
+    uint8_t y = this->m_y + NSET_MARGIN_SIZE;
 
     switch (this->m_size) {
         case 1:
@@ -274,7 +274,7 @@ void NumberSet::printSideB(uint8_t x, uint16_t color) {
 }
 
 void NumberSet::printSideC(uint8_t x, uint16_t color) {
-    uint8_t y = this->m_y + MARGIN_SIZE + this->m_numberHeight / 2;
+    uint8_t y = this->m_y + NSET_MARGIN_SIZE + this->m_numberHeight / 2;
 
     switch (this->m_size) {
         case 1:
@@ -293,14 +293,14 @@ void NumberSet::printSideC(uint8_t x, uint16_t color) {
 }
 
 void NumberSet::printSideD(uint8_t x, uint16_t color) {
-    uint8_t y = this->m_y + MARGIN_SIZE + this->m_numberHeight;
+    uint8_t y = this->m_y + NSET_MARGIN_SIZE + this->m_numberHeight;
 
     for (uint8_t line = 1; line <= this->m_size; line++)
         m_tft->drawFastHLine(x + line, y - line, this->m_numberWidth - (line * 2), color);
 }
 
 void NumberSet::printSideE(uint8_t x, uint16_t color) {
-    uint8_t y = this->m_y + MARGIN_SIZE + this->m_numberHeight / 2;
+    uint8_t y = this->m_y + NSET_MARGIN_SIZE + this->m_numberHeight / 2;
 
     switch (this->m_size) {
         case 1:
@@ -319,7 +319,7 @@ void NumberSet::printSideE(uint8_t x, uint16_t color) {
 }
 
 void NumberSet::printSideF(uint8_t x, uint16_t color) {
-    uint8_t y = this->m_y + MARGIN_SIZE;
+    uint8_t y = this->m_y + NSET_MARGIN_SIZE;
 
     switch (this->m_size) {
         case 1:
@@ -338,7 +338,7 @@ void NumberSet::printSideF(uint8_t x, uint16_t color) {
 }
 
 void NumberSet::printSideG(uint8_t x, uint16_t color) {
-    uint8_t y = this->m_y + MARGIN_SIZE + (this->m_numberHeight / 2);
+    uint8_t y = this->m_y + NSET_MARGIN_SIZE + (this->m_numberHeight / 2);
 
     switch (this->m_size) {
         case 1:
@@ -364,7 +364,7 @@ void NumberSet::printPunctuation(char chr, uint8_t x, uint16_t color) {
 }
 
 void NumberSet::printColon(uint8_t x, uint16_t color){
-    uint8_t y = this->m_y + MARGIN_SIZE + (this->m_numberHeight / 4);
+    uint8_t y = this->m_y + NSET_MARGIN_SIZE + (this->m_numberHeight / 4);
     if (this->m_size == 3)
         y -= 1;
     this->m_tft->fillRect(x, y, this->m_size, this->m_size, color);
@@ -378,6 +378,6 @@ void NumberSet::printColon(uint8_t x, uint16_t color){
 }
 
 void NumberSet::printDot(uint8_t x, uint16_t color) {
-    uint8_t y = this->m_y + MARGIN_SIZE + this->m_numberHeight - this->m_size;
+    uint8_t y = this->m_y + NSET_MARGIN_SIZE + this->m_numberHeight - this->m_size;
     this->m_tft->fillRect(x, y, this->m_size, this->m_size, color);
 }

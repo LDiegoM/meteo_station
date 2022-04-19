@@ -1,12 +1,13 @@
 /*
-    This will be a set of 4 numbers.
-    Will allow to print 1234, 12:34, 12.34, 123.4, 1.234, -1234, -1.234, -12.34, -123.4, 12%
-    Also will have 3 sizes (1, 2, 3)
+    This is a set of 4 numbers.
+    It allows to print number in the following formats:
+        1234, 12:34, 12.34, 123.4, 1.234, -1234, -1.234, -12.34, -123.4
+    It also have 3 sizes (1, 2, 3)
 
-    The numbers-set will start at a given pixel coordinate,
-    and will return height and height, depending on the size.
+    The numbers-set starts at a given pixel coordinate (x, y),
+    and returns width and height, depending on the size.
 
-    Will have 1 margin pixel at all sides.
+    It has 1 margin pixel at all sides.
 
     A
    ---
@@ -17,6 +18,8 @@ E |   | C
   |   |
    ---
     D
+
+    Diego M. Lopez - 2021 (ldiegom@gmail.com)
 */
 
 #ifndef number_set_h
@@ -60,44 +63,44 @@ E |   | C
 #define NS_UFLT_3_W 101
 #define NS_SFLT_3_W 112
 
+const uint8_t NSET_MARGIN_SIZE = 1;
+
+// Regex definition and test cases: https://regexr.com/6dlos
+const std::regex NSET_REG_EXPR[5] = {
+    std::regex("^[0-9]{2}:?[0-9]{2}$"),                                                                        // NS_HHMM: HHMM, HH:MM
+    std::regex("^[0-9]{4}$"),                                                                                  // NS_UINT: NNNN
+    std::regex("^-?[0-9]{4}$"),                                                                                // NS_SINT: -NNNN
+    std::regex("(^\\.?[0-9]{4}$)|(^[0-9]{1}\\.?[0-9]{3}$)|(^[0-9]{2}\\.?[0-9]{2}$)|(^[0-9]{3}\\.?[0-9]{1}$)"), // NS_UFLT: 1234, 12.34
+    std::regex("(^-?[0-9]{1}\\.?[0-9]{3}$)|(^-?[0-9]{2}\\.?[0-9]{2}$)|(^-?[0-9]{3}\\.?[0-9]{1}$)")             // NS_SFLT: -1234, -12.34, 12.34, 1234
+};
+
+const uint8_t NSET_DIGITS[10][7] = {
+//   a  b  c  d  e  f  g
+    {1, 1, 1, 1, 1, 1, 0}, // 0
+    {0, 1, 1, 0, 0, 0, 0}, // 1
+    {1, 1, 0, 1, 1, 0, 1}, // 2
+    {1, 1, 1, 1, 0, 0, 1}, // 3
+    {0, 1, 1, 0, 0, 1, 1}, // 4
+    {1, 0, 1, 1, 0, 1, 1}, // 5
+    {1, 0, 1, 1, 1, 1, 1}, // 6
+    {1, 1, 1, 0, 0, 0, 0}, // 7
+    {1, 1, 1, 1, 1, 1, 1}, // 8
+    {1, 1, 1, 1, 0, 1, 1}  // 9
+};
+
+struct nset_sizes_t {
+    uint8_t signWidth;
+    uint8_t numberHeight;
+    uint8_t numberWidth;
+};
+const nset_sizes_t NSET_SIZES[3] = {
+    {2, 11, 6},
+    {3, 18, 10},
+    {8, 43, 21}
+};
+
 class NumberSet {
     private:
-        const uint8_t DIGITS[10][7] = {
-        //   a  b  c  d  e  f  g
-            {1, 1, 1, 1, 1, 1, 0}, // 0
-            {0, 1, 1, 0, 0, 0, 0}, // 1
-            {1, 1, 0, 1, 1, 0, 1}, // 2
-            {1, 1, 1, 1, 0, 0, 1}, // 3
-            {0, 1, 1, 0, 0, 1, 1}, // 4
-            {1, 0, 1, 1, 0, 1, 1}, // 5
-            {1, 0, 1, 1, 1, 1, 1}, // 6
-            {1, 1, 1, 0, 0, 0, 0}, // 7
-            {1, 1, 1, 1, 1, 1, 1}, // 8
-            {1, 1, 1, 1, 0, 1, 1}  // 9
-        };
-
-        struct sizes_t {
-            uint8_t signWidth;
-            uint8_t numberHeight;
-            uint8_t numberWidth;
-        };
-        const uint8_t MARGIN_SIZE = 1;
-        const sizes_t SIZES[3] = {
-            {2, 11, 6},
-            {3, 18, 10},
-            {8, 43, 21}
-        };
-
-        // Regex definition and test cases: https://regexr.com/6dlos
-        //const std::regex REG_EXPR = std::regex("^(-?[0-9]{2}\\.?[0-9]{2})|(-?[0-9]{1}\\.?[0-9]{3})|(-?[0-9]{3}\\.?[0-9]{1})|([0-9]{2}:?[0-9]{2})$");
-        const std::regex REG_EXPR[5] = {
-            std::regex("^[0-9]{2}:?[0-9]{2}$"),                                                                        // NS_HHMM: HHMM, HH:MM
-            std::regex("^[0-9]{4}$"),                                                                                  // NS_UINT: NNNN
-            std::regex("^-?[0-9]{4}$"),                                                                                // NS_SINT: -NNNN
-            std::regex("(^\\.?[0-9]{4}$)|(^[0-9]{1}\\.?[0-9]{3}$)|(^[0-9]{2}\\.?[0-9]{2}$)|(^[0-9]{3}\\.?[0-9]{1}$)"), // NS_UFLT: 1234, 12.34
-            std::regex("(^-?[0-9]{1}\\.?[0-9]{3}$)|(^-?[0-9]{2}\\.?[0-9]{2}$)|(^-?[0-9]{3}\\.?[0-9]{1}$)")             // NS_SFLT: -1234, -12.34, 12.34, 1234
-        };
-
         TFT_ILI9163C* m_tft;
         uint8_t m_x, m_y;
         uint8_t m_format;

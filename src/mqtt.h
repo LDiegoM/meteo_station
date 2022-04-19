@@ -1,3 +1,9 @@
+/*
+    This is an implementation of MQTT queues for meteo station.
+
+    Diego M. Lopez - 2021 (ldiegom@gmail.com)
+*/
+
 #ifndef mqtt_h
 #define mqtt_h
 
