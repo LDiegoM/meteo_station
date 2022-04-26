@@ -7,6 +7,7 @@ DataLogger::DataLogger(Sensors *sensors, DateTime *dateTime, Storage *storage, S
     m_storage = storage;
     m_filePath = filePath;
     m_tmrLog = new Timer(logPeriod_sec * 1000);
+    m_lastLogTime = "0000-00-00 00:00:00";
 }
 
 //////////////////// Public methods implementation
@@ -26,23 +27,33 @@ void DataLogger::logData() {
     writeData();
 }
 
+String DataLogger::getLastLogTime() {
+    return m_lastLogTime;
+}
+
 //////////////////// Private methods implementation
 String DataLogger::getLogData() {
-    String ret = "";
-
-    if (m_dateTime->refresh()) {
-        ret += m_dateTime->toString() + "\t";
-    }
-
-    ret += String(m_sensors->temp()) + "\t";
+    String ret = String(m_sensors->temp()) + "\t";
     ret += String(m_sensors->pres()) + "\t";
     ret += String(m_sensors->humi()) + "\n";
-
-    Serial.print("log: " + ret);
 
     return ret;
 }
 
-void DataLogger::writeData() {
-    m_storage->writeFile(m_filePath.c_str(), getLogData().c_str());
+bool DataLogger::writeData() {
+    String logTime = "";
+    if (m_dateTime->refresh()) {
+        logTime = m_dateTime->toString() + "\t";
+    } else {
+        return false;
+    }
+
+    String fullData = logTime +  getLogData();
+    Serial.print("log: " + fullData);
+
+    bool res = m_storage->writeFile(m_filePath.c_str(), fullData.c_str());
+    if (res)
+        m_lastLogTime = logTime;
+    
+    return res;
 }

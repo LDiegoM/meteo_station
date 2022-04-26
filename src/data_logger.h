@@ -13,9 +13,10 @@ class DataLogger {
         Storage *m_storage;
         String m_filePath;
         Timer *m_tmrLog;
+        String m_lastLogTime;
 
         String getLogData();
-        void writeData();
+        bool writeData();
     
     public:
         DataLogger(Sensors *sensors, DateTime *dateTime, Storage *storage, String filePath, uint16_t logPeriod);
@@ -23,6 +24,7 @@ class DataLogger {
         void start();
         void loop();
         void logData();
+        String getLastLogTime();
 };
 
 #endif

@@ -155,12 +155,6 @@ void setup(void) {
     ddmmRep = new NumberSet(tft, tft->width() - (NS_UFLT_1_W * 2) - 3, tft->height() - NS_SIZE_1_H - 3, NS_UFLT, 1, BACKGROUND, FORE_COLOR);
     yearRep = new NumberSet(tft, ddmmRep->x() + ddmmRep->width(), ddmmRep->y(), NS_UFLT, 1, BACKGROUND, FORE_COLOR);
 
-    mqtt = new MQTT(wifi, sensors, settings, tft, messageReceived);
-    if (!mqtt->begin()) {
-        Serial.println("MQTT is not connected");
-        return;
-    }
-
     // Get current time
     dateTime = new DateTime(
         settings->getSettings().dateTime.gmtOffset,
@@ -171,6 +165,12 @@ void setup(void) {
                                 settings->getSettings().storage.outputPath,
                                 settings->getSettings().storage.writePeriod);
     dataLogger->logData();    
+
+    mqtt = new MQTT(wifi, sensors, settings, tft, dataLogger, messageReceived);
+    if (!mqtt->begin()) {
+        Serial.println("MQTT is not connected");
+        return;
+    }
 
     drawScreen();
     printDateTime();

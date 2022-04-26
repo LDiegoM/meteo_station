@@ -72,6 +72,7 @@ Meteo station listens from the topic `topic-meteo-cmd` to receive different comm
 Theese are the available commands:
 - `RESEND`: when this command is received (value fueld doesn't matters), the aplication will send current measures to MQTT topics.
 - `GET_IP`: value field doesn't matters. The application will publish current local IP to topic `topic-meteo-res-ip`.
+- `GET_LOG`: value field doesn't matters. The application will publish last successfully written log timestamp to topic `topic-meteo-res-log`, in format `yyyy-mm-dd hh:mm:ss`.
 - `SET_AP_SSID`: value field should be the ssid of the wifi AP to add to settings. The application will publish `OK` or `ERROR: message` to the topic `topic-meteo-res-ap-ssid`. SSID should not be empty nor currently present in settings-
 - `SET_AP_PASS`: value field should be the password of the wifi AP to add to settings. The application will publish `OK` or `ERROR: message` to the topic `topic-meteo-res-ap-pass`. Password could be empty.
 - `SET_AP_SAVE`: value field doesn't matters. The application will save the new wifi AP with given ssid and password using `SET_AP_SSID` and `SET_AP_PASS` commands, and publish `OK` or `ERROR: message` to the topic `topic-meteo-res-ap-save`.
@@ -92,9 +93,10 @@ For monitoring porpuses I configured a complet IoT dashboard using [Iot MQTT Pan
 
 # Changelog
 
-## Unreleased
+## 0.0.5 - 2022-04-26
 
 - Log weather measures to SD card.
+- Add data log monitoring command to MQTT subscriber.
 
 ## 0.0.4 - 2022-04-15
 
