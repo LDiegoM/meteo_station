@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <time.h>
 #include <Adafruit_GFX.h>
 #include <TFT_ILI9163C.h>
 #include <Fonts/FreeSans9pt7b.h>
@@ -9,8 +8,10 @@
 #include <storage.h>
 #include <settings.h>
 #include <wifi_connection.h>
+#include <date_time.h>
 #include <mqtt.h>
 #include <number_set.h>
+#include <data_logger.h>
 
 // Color definitions
 #define BLACK 0x0000
@@ -45,7 +46,9 @@ Timer *tmrRefreshTime, *tmrShowPres;
 Storage *storage;
 Settings *settings;
 WiFiConnection *wifi;
+DateTime *dateTime;
 MQTT *mqtt;
+DataLogger *dataLogger;
 
 // Starts showing humidity
 bool flgShowPres = false;
@@ -58,22 +61,14 @@ void switchHumiPres();
 void messageReceived(char* topic, uint8_t* payload, unsigned int length);
 
 void printDateTime() {
-    tm timeInfo;
-    if(!getLocalTime(&timeInfo)){
-        Serial.println("Failed to obtain time");
+    if(!dateTime->refresh()) {
+        Serial.println("Failed to refresh time");
         return;
     }
 
-    char year[5], month[3], day[3], hour[3], minutes[3];
-    strftime(year, 5, "%Y", &timeInfo);
-    strftime(month, 3, "%m", &timeInfo);
-    strftime(day, 3, "%d", &timeInfo);
-    strftime(hour, 3, "%H", &timeInfo);
-    strftime(minutes, 3, "%M", &timeInfo);
-
-    timeRep->setValue(String(hour) + ":" + String(minutes));
-    ddmmRep->setValue(String(day) + "." + String(month));
-    yearRep->setValue("." + String(year));
+    timeRep->setValue(dateTime->hour() + ":" + dateTime->minutes());
+    ddmmRep->setValue(dateTime->day() + "." + dateTime->month());
+    yearRep->setValue("." + dateTime->year());
 }
 
 void printValues() {
@@ -167,10 +162,15 @@ void setup(void) {
     }
 
     // Get current time
-    configTime(
-        settings->getSettings().dateTime.gmtOffset * 60 * 60,
-        settings->getSettings().dateTime.daylightOffset * 60 * 60,
+    dateTime = new DateTime(
+        settings->getSettings().dateTime.gmtOffset,
+        settings->getSettings().dateTime.daylightOffset,
         settings->getSettings().dateTime.server.c_str());
+
+    dataLogger = new DataLogger(sensors, dateTime, storage,
+                                settings->getSettings().storage.outputPath,
+                                settings->getSettings().storage.writePeriod);
+    dataLogger->logData();    
 
     drawScreen();
     printDateTime();
@@ -206,6 +206,8 @@ void loop() {
         timeRep->refresh();
         ddmmRep->refresh();
         yearRep->refresh();
+
+        dataLogger->loop();
     }
     mqtt->loop();
 }

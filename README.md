@@ -18,7 +18,7 @@ Topics list:
 - `topic-meteo-pres`: pressure value from BMP180.
 - `topic-meteo-humi`: humidity value from DHT11.
 
-WIP: Meteo station future version will log measures in the microSD card, in the file `/meteo_data.txt`.
+Meteo station logs measures in the microSD card, in the file `/meteo_data.txt` (defined in settings file).
 
 Meteo station shows information in a 128x128 pixels display, in this format:
 
@@ -91,6 +91,10 @@ For monitoring porpuses I configured a complet IoT dashboard using [Iot MQTT Pan
 - Main idea, development and functional prototype by Diego M. Lopez (ldiegom@gmail.com)
 
 # Changelog
+
+## Unreleased
+
+- Log weather measures to SD card.
 
 ## 0.0.4 - 2022-04-15
 
