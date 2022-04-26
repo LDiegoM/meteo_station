@@ -15,6 +15,7 @@
 #include <timer.h>
 #include <sensors.h>
 #include <settings.h>
+#include <data_logger.h>
 
 class MQTT {
     private:
@@ -22,6 +23,7 @@ class MQTT {
         Sensors *m_sensors;
         Settings *m_settings;
         TFT_ILI9163C *m_tft;
+        DataLogger *m_dataLogger;
 
         WiFiClientSecure *m_secureClient;
 
@@ -35,6 +37,7 @@ class MQTT {
         const char* MQTT_TOPIC_HUMI = "topic-meteo-humi";
         const char* MQTT_TOPIC_CMD = "topic-meteo-cmd";
         const char* MQTT_TOPIC_RES_IP = "topic-meteo-res-ip";
+        const char* MQTT_TOPIC_RES_LOG = "topic-meteo-res-log";
         const char* MQTT_TOPIC_RES_AP_SSID = "topic-meteo-res-ap-ssid";
         const char* MQTT_TOPIC_RES_AP_PASS = "topic-meteo-res-ap-pass";
         const char* MQTT_TOPIC_RES_AP_SAVE = "topic-meteo-res-ap-save";
@@ -54,7 +57,8 @@ class MQTT {
         bool jsonToCommand(String json);
 
     public:
-        MQTT(WiFiConnection *wifi, Sensors *sensors, Settings *settings, TFT_ILI9163C *tft, MQTT_CALLBACK_SIGNATURE);
+        MQTT(WiFiConnection *wifi, Sensors *sensors, Settings *settings, TFT_ILI9163C *tft,
+             DataLogger *dataLogger, MQTT_CALLBACK_SIGNATURE);
         
         bool begin();
         bool connect();
