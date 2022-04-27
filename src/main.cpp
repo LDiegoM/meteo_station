@@ -12,6 +12,7 @@
 #include <mqtt.h>
 #include <number_set.h>
 #include <data_logger.h>
+#include <http_handlers.h>
 
 // Color definitions
 #define BLACK 0x0000
@@ -49,6 +50,7 @@ WiFiConnection *wifi;
 DateTime *dateTime;
 MQTT *mqtt;
 DataLogger *dataLogger;
+HttpHandlers *httpHandlers;
 
 // Starts showing humidity
 bool flgShowPres = false;
@@ -59,6 +61,9 @@ void printDateTime();
 void printValues();
 void switchHumiPres();
 void messageReceived(char* topic, uint8_t* payload, unsigned int length);
+void downloadLogs();
+void deleteLogs();
+void getSettings();
 
 void printDateTime() {
     if(!dateTime->refresh()) {
@@ -115,6 +120,20 @@ void messageReceived(char* topic, uint8_t* payload, unsigned int length) {
     mqtt->processReceivedMessage(topic, payload, length);
 }
 
+/////////// HTTP Handlers
+void downloadLogs() {
+    httpHandlers->handleDownloadLogs();
+}
+
+void deleteLogs() {
+    if (httpHandlers->handleDeleteLogs())
+        dataLogger->logData();
+}
+
+void getSettings() {
+    httpHandlers->handleGetSettings();
+}
+
 void setup(void) {
     Serial.begin(9600);
     Serial.println("begin setup - " + String(ESP.getFreeHeap()));
@@ -149,6 +168,13 @@ void setup(void) {
     wifi = new WiFiConnection(settings, tft);
     wifi->begin();
 
+    httpHandlers = new HttpHandlers(wifi, storage, settings, tft,
+                                    downloadLogs, deleteLogs, getSettings);
+    if (!httpHandlers->begin()) {
+        Serial.println("Could not start http server");
+        return;
+    }
+
     tempRep = new NumberSet(tft, 3, 20, NS_SFLT, 2, BACKGROUND, FORE_COLOR);
     presHumiRep = new NumberSet(tft, 64 + 3, 20, NS_SFLT, 2, BACKGROUND, FORE_COLOR);
     timeRep = new NumberSet(tft, (tft->width() - NS_HHMM_3_W) / 2, tempRep->y() + tempRep->height() + 15, NS_HHMM, 3, BACKGROUND, FORE_COLOR);
@@ -164,7 +190,7 @@ void setup(void) {
     dataLogger = new DataLogger(sensors, dateTime, storage,
                                 settings->getSettings().storage.outputPath,
                                 settings->getSettings().storage.writePeriod);
-    dataLogger->logData();    
+    dataLogger->logData();
 
     mqtt = new MQTT(wifi, sensors, settings, tft, dataLogger, messageReceived);
     if (!mqtt->begin()) {
@@ -208,6 +234,7 @@ void loop() {
         yearRep->refresh();
 
         dataLogger->loop();
+        httpHandlers->loop();
     }
     mqtt->loop();
 }

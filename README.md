@@ -93,6 +93,10 @@ For monitoring porpuses I configured a complet IoT dashboard using [Iot MQTT Pan
 
 # Changelog
 
+## 0.0.6 - 2022-04-27
+
+- Add http endpoints to download and delete meteo_logs and get settings.
+
 ## 0.0.5 - 2022-04-26
 
 - Log weather measures to SD card.

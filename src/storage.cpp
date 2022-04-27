@@ -75,7 +75,7 @@ bool Storage::writeFile(const char *path, const char *message) {
     delay(100);
 
     bool flgOk = false;
-    if (file.print(message))
+    if (file.print(message) > 0)
         flgOk = true;
 
     file.close();
@@ -85,4 +85,8 @@ bool Storage::writeFile(const char *path, const char *message) {
 
 bool Storage::deleteFile(const char *path) {
     return m_fs->remove(path);
+}
+
+FS* Storage::fs() {
+    return m_fs;
 }
