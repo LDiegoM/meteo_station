@@ -87,6 +87,41 @@ For monitoring porpuses I configured a complet IoT dashboard using [Iot MQTT Pan
 
 [Here](./doc/IoTMQTTPanel.json) I let a JSON file to import in IoT MQTT Panel application to built the default dashboards.
 
+# API Endpoints
+
+Meteo station implements the following API endpoints, listening in port 80:
+
+- GET `/logs`: Downloads a file named `meteo_logs.txt` with all recorded weather measures.
+
+Status resopnse table:
+
+| HTTP status code | Meaning |
+|---               |---      |
+|       500        | There was an internal error opening file at the device.|
+|       404        | Logs file wasn't found in SD card. |
+|       200        | Logs file was successfully downloaded. |
+
+- DELETE `/logs`: Allow to completely delete current weather measures. It'll log a new measure at the deletion moment.
+
+Status resopnse table:
+
+| HTTP status code | Meaning |
+|---               |---      |
+|       500        | There was an internal error deleting file at the device. |
+|       404        | Logs file wasn't found in SD card. |
+|       204        | Logs file was successfully removed. |
+
+- GET `/settings`: Returns current settings as they're written in setings file in the response body.
+
+Status resopnse table:
+
+| HTTP status code | Meaning |
+|---               |---      |
+|       404        | Settings file wasn't found in SD card. |
+|       200        | Settings were successfully returned to client. |
+
+Notice that the settings include MQTT and Wifi APs passwords as plain text. In future version it'll be encrypted.
+
 # Author
 
 - Main idea, development and functional prototype by Diego M. Lopez (ldiegom@gmail.com)
