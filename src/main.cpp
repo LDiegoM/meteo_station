@@ -135,7 +135,7 @@ void getSettings() {
 }
 
 void setup(void) {
-    Serial.begin(9600);
+    Serial.begin(115200);
     Serial.println("begin setup - " + String(ESP.getFreeHeap()));
 
     tft = new TFT_ILI9163C(TFT_CS, TFT_DC);

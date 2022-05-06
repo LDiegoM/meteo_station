@@ -31,6 +31,10 @@ String DataLogger::getLastLogTime() {
     return m_lastLogTime;
 }
 
+float DataLogger::logSize() {
+    return ((float) m_storage->fileSize(m_filePath.c_str())) / 1024;
+}
+
 //////////////////// Private methods implementation
 String DataLogger::getLogData() {
     String ret = String(m_sensors->temp()) + "\t";
