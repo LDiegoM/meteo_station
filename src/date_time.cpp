@@ -1,9 +1,7 @@
 #include <date_time.h>
 
 //////////////////// Constructor
-DateTime::DateTime(long gmtOffset_hours, int daylightOffset_hours, const char* server) {
-    configTime(gmtOffset_hours * 60 * 60, daylightOffset_hours * 60 * 60, server);
-}
+DateTime::DateTime() {}
 
 //////////////////// Public methods implementation
 bool DateTime::refresh() {

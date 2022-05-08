@@ -164,6 +164,7 @@ void setup(void) {
         Serial.println("Settings are not ok");
         return;
     }
+    settings_t config = settings->getSettings();
 
     wifi = new WiFiConnection(settings, tft);
     wifi->begin();
@@ -181,15 +182,13 @@ void setup(void) {
     ddmmRep = new NumberSet(tft, tft->width() - (NS_UFLT_1_W * 2) - 3, tft->height() - NS_SIZE_1_H - 3, NS_UFLT, 1, BACKGROUND, FORE_COLOR);
     yearRep = new NumberSet(tft, ddmmRep->x() + ddmmRep->width(), ddmmRep->y(), NS_UFLT, 1, BACKGROUND, FORE_COLOR);
 
-    // Get current time
-    dateTime = new DateTime(
-        settings->getSettings().dateTime.gmtOffset,
-        settings->getSettings().dateTime.daylightOffset,
-        settings->getSettings().dateTime.server.c_str());
+    // Configure current time
+    configTime(config.dateTime.gmtOffset * 60 * 60,
+               config.dateTime.daylightOffset * 60 * 60,
+               config.dateTime.server.c_str());
+    dateTime = new DateTime();
 
-    dataLogger = new DataLogger(sensors, dateTime, storage,
-                                settings->getSettings().storage.outputPath,
-                                settings->getSettings().storage.writePeriod);
+    dataLogger = new DataLogger(sensors, dateTime, storage, config.storage.outputPath, config.storage.writePeriod);
     dataLogger->logData();
 
     mqtt = new MQTT(wifi, sensors, settings, tft, dataLogger, messageReceived);
