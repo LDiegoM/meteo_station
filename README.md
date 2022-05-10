@@ -128,6 +128,11 @@ Notice that the settings include MQTT and Wifi APs passwords as plain text. In f
 
 # Changelog
 
+## 0.0.7 - 2022-05-10
+
+- Update dependencies and remove from stored libs
+- Fix date-time configuration
+
 ## 0.0.6 - 2022-04-27
 
 - Add http endpoints to download and delete meteo_logs and get settings.
