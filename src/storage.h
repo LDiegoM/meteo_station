@@ -1,8 +1,9 @@
 #ifndef storage_h
 #define storage_h
 
-#include "FS.h"
-#include "SD.h"
+#include <FS.h>
+#include <SD.h>
+#include <SPI.h>
 #include <TFT_ILI9163C.h>
 #include <timer.h>
 

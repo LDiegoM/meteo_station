@@ -27,7 +27,7 @@ bool Settings::isSettingsOK() {
     return m_settingsOK;
 }
 
-Settings::settings Settings::getSettings() {
+settings_t Settings::getSettings() {
     return m_settings;
 }
 
@@ -41,7 +41,7 @@ bool Settings::saveSettings() {
 }
 
 void Settings::addWifiAP(const char* ssid, const char* password) {
-    wifiAP ap = {
+    wifiAP_t ap = {
         ssid: ssid,
         password: password
     };
@@ -80,7 +80,7 @@ bool Settings::readSettings() {
 
     m_settings.wifiAPs.clear();
     for (int i = 0; i < jsonObj["wifi"].size(); i++) {
-        wifiAP wifi;
+        wifiAP_t wifi;
         wifi.ssid = jsonObj["wifi"][i]["ssid"].as<String>();
         wifi.password = jsonObj["wifi"][i]["password"].as<String>();
 

@@ -12,7 +12,7 @@ class DateTime {
         void setValues();
 
     public:
-        DateTime(long gmtOffset_hours, int daylightOffset_hours, const char* server);
+        DateTime();
 
         bool refresh();
         String toString();
