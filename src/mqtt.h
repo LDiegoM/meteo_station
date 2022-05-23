@@ -41,6 +41,7 @@ class MQTT {
         const char* MQTT_TOPIC_RES_AP_SSID = "topic-meteo-res-ap-ssid";
         const char* MQTT_TOPIC_RES_AP_PASS = "topic-meteo-res-ap-pass";
         const char* MQTT_TOPIC_RES_AP_SAVE = "topic-meteo-res-ap-save";
+        const char* MQTT_TOPIC_RES_LOGSIZE = "topic-meteo-res-logsize";
 
         MQTT_CALLBACK_SIGNATURE;
 

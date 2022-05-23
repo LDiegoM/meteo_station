@@ -20,6 +20,7 @@ class Storage {
         char* readAll(const char *path);
         bool writeFile(const char *path, const char *message);
         bool deleteFile(const char *path);
+        size_t fileSize(const char *path);
         FS* fs();
 };
 

@@ -1,11 +1,12 @@
 {
-	"dataVersion": 54,
-	"appTheme": "default",
-	"runInBackground": true,
-	"wakeLock": false,
-	"displayOrientation": "portrait",
-	"connections": [{
-			"autoConnect": true,
+    "dataVersion": 54,
+    "appTheme": "default",
+    "runInBackground": true,
+    "wakeLock": false,
+    "displayOrientation": "portrait",
+    "connections": [
+        {
+            "autoConnect": true,
 			"connectionName": "your_awesome_connection_name",
 			"clientId": "your_awesome_client_id",
 			"host": "your_awesome_host_address",
@@ -13,420 +14,448 @@
 			"connectionType": "wss",
 			"username": "your_awesome_username",
 			"password": "your_awesome_password",
-			"connectionTimeout": 30,
-			"keepAlive": 60,
-			"defaultDashboard": "dashboard_0",
-			"connectionId": "connection_0",
-			"dashboards": [{
-					"dashboardId": "dashboard_0",
-					"dashboardName": "Estación meteorológica",
-					"dashboardPrefixTopic": "",
-					"dashboardIcon": "meter",
-					"dashboardColor": "#2196F3",
-					"panels": [{
-							"firstColor": "#009600",
-							"secondColor": "#fac800",
-							"thirdColor": "#ff5722",
-							"panelName": "Temp",
-							"topic": "topic-meteo-temp",
-							"payloadMin": 0,
-							"payloadMax": 50,
-							"firstColorEnd": 28,
-							"secondColorEnd": 36,
-							"qos": 0,
-							"unit": "°C",
-							"panelId": "panel_0",
-							"type": "gauge",
-							"mqttType": "sub",
-							"panelWidth": "50"
-						}, {
-							"panelName": "Pres",
-							"topic": "topic-meteo-pres",
-							"payloadMin": 900,
-							"payloadMax": 1100,
-							"unit": "hPa",
-							"qos": 0,
-							"panelId": "panel_1",
-							"type": "vertical-meter",
-							"mqttType": "sub",
-							"panelWidth": "50"
-						}, {
-							"unit": "%",
-							"payloadMin": 0,
-							"payloadMax": 100,
-							"topic": "topic-meteo-humi",
-							"panelName": "Humedad ambiente",
-							"qos": 0,
-							"panelId": "panel_7",
-							"type": "linear-progress",
-							"mqttType": "sub",
-							"panelWidth": "100",
-							"panelMergeClass": "    "
-						}, {
-							"noOfDivisor": 5,
-							"maxPersistence": 200,
-							"comboItemList": [{
-									"color": "#0000ff",
-									"$$hashKey": "object:476",
-									"topic": "topic-meteo-temp",
-									"showPoints": true,
-									"label": "°C",
-									"panelTopic": "topic-meteo-temp",
-									"lineGraphData": [{
-											"x": "2022-04-15T03:53:31.933Z",
-											"y": 25
-										}, {
-											"x": "2022-04-15T04:31:37.992Z",
-											"y": 24.6
-										}, {
-											"x": "2022-04-15T04:32:44.247Z",
-											"y": 24.6
-										}, {
-											"x": "2022-04-15T04:34:17.120Z",
-											"y": 24.5
-										}, {
-											"x": "2022-04-15T04:35:17.020Z",
-											"y": 24.7
-										}, {
-											"x": "2022-04-15T04:41:07.568Z",
-											"y": 24.4
-										}, {
-											"x": "2022-04-15T04:42:10.801Z",
-											"y": 24.6
-										}, {
-											"x": "2022-04-15T04:43:01.314Z",
-											"y": 24.5
-										}, {
-											"x": "2022-04-15T04:44:32.856Z",
-											"y": 24.5
-										}, {
-											"x": "2022-04-15T04:47:17.020Z",
-											"y": 24.4
-										}
-									]
-								}
-							],
-							"xAxisTimeFormat": "HH:mm",
-							"panelName": "Temperatura",
-							"unit": "°C",
-							"qos": 0,
-							"panelId": "panel_2",
-							"type": "line-graph",
-							"mqttType": "sub",
-							"panelWidth": "100"
-						}, {
-							"noOfDivisor": 5,
-							"maxPersistence": 200,
-							"comboItemList": [{
-									"color": "#54712a",
-									"$$hashKey": "object:476",
-									"topic": "topic-meteo-pres",
-									"showPoints": true,
-									"label": "hPa",
-									"panelTopic": "topic-meteo-pres",
-									"lineGraphData": [{
-											"x": "2022-04-15T03:53:32.203Z",
-											"y": 1019.92
-										}, {
-											"x": "2022-04-15T04:31:38.003Z",
-											"y": 1019.89
-										}, {
-											"x": "2022-04-15T04:32:44.257Z",
-											"y": 1019.9
-										}, {
-											"x": "2022-04-15T04:34:17.128Z",
-											"y": 1019.9
-										}, {
-											"x": "2022-04-15T04:35:17.030Z",
-											"y": 1019.85
-										}, {
-											"x": "2022-04-15T04:42:10.817Z",
-											"y": 1019.86
-										}, {
-											"x": "2022-04-15T04:43:01.309Z",
-											"y": 1019.89
-										}, {
-											"x": "2022-04-15T04:44:32.869Z",
-											"y": 1019.92
-										}, {
-											"x": "2022-04-15T04:47:17.045Z",
-											"y": 1019.94
-										}
-									]
-								}
-							],
-							"xAxisTimeFormat": "HH:mm",
-							"panelName": "Presión atmosférica",
-							"unit": "",
-							"qos": 0,
-							"panelId": "panel_6",
-							"type": "line-graph",
-							"mqttType": "sub",
-							"panelWidth": "100"
-						}, {
-							"noOfDivisor": 5,
-							"maxPersistence": 200,
-							"comboItemList": [{
-									"color": "#d70206",
-									"$$hashKey": "object:2066",
-									"topic": "topic-meteo-humi",
-									"label": "%",
-									"showPoints": true,
-									"panelTopic": "topic-meteo-humi",
-									"lineGraphData": [{
-											"x": "2022-04-15T03:53:32.210Z",
-											"y": 43
-										}, {
-											"x": "2022-04-15T04:31:38.000Z",
-											"y": 42
-										}, {
-											"x": "2022-04-15T04:32:44.259Z",
-											"y": 43
-										}, {
-											"x": "2022-04-15T04:34:17.131Z",
-											"y": 42
-										}, {
-											"x": "2022-04-15T04:35:17.036Z",
-											"y": 43
-										}, {
-											"x": "2022-04-15T04:42:10.822Z",
-											"y": 43
-										}, {
-											"x": "2022-04-15T04:43:01.316Z",
-											"y": 43
-										}, {
-											"x": "2022-04-15T04:44:32.877Z",
-											"y": 42
-										}, {
-											"x": "2022-04-15T04:47:17.049Z",
-											"y": 43
-										}
-									]
-								}
-							],
-							"xAxisTimeFormat": "HH:mm",
-							"panelName": "Humedad ambiente",
-							"unit": "%",
-							"qos": 0,
-							"panelId": "panel_9",
-							"type": "line-graph",
-							"mqttType": "sub",
-							"panelWidth": "100"
-						}, {
-							"panelName": "REFRESH",
-							"topic": "topic-meteo-cmd",
-							"payload": "RESEND",
-							"hasCustomIcon": true,
-							"icon": "rotate_left",
-							"iconColor": "#9E9E9E",
-							"buttonSize": "medium",
-							"fitToPanelWidth": true,
-							"qos": 0,
-							"panelId": "panel_3",
-							"type": "button",
-							"mqttType": "pub",
-							"panelWidth": "100",
-							"retain": false,
-							"isJSONPayload": true,
-							"jsonEnvelope": "{\"cmd\": \"RESEND\", \"value\": \"\"}"
-						}, {
-							"showReceivedTimeStamp": true,
-							"panelName": "Temperatura",
-							"topic": "topic-meteo-temp",
-							"logLength": 10,
-							"maxPersistence": 200,
-							"unit": "°C",
-							"hideTopic": true,
-							"qos": 0,
-							"panelId": "panel_4",
-							"type": "log",
-							"mqttType": "sub",
-							"panelWidth": "50"
-						}, {
-							"showReceivedTimeStamp": true,
-							"panelName": "Temperatura 2",
-							"topic": "topic-meteo-temp2",
-							"logLength": 10,
-							"maxPersistence": 200,
-							"unit": "°C",
-							"qos": 0,
-							"panelId": "panel_10",
-							"type": "log",
-							"mqttType": "sub",
-							"panelWidth": "50",
-							"hideTopic": true,
-							"panelMergeClass": " merge-right  "
-						}, {
-							"showReceivedTimeStamp": true,
-							"panelName": "Presión",
-							"topic": "topic-meteo-pres",
-							"qos": 0,
-							"unit": "hPa",
-							"hideTopic": true,
-							"logLength": 10,
-							"maxPersistence": 200,
-							"panelId": "panel_5",
-							"type": "log",
-							"mqttType": "sub",
-							"panelWidth": "50"
-						}, {
-							"showReceivedTimeStamp": true,
-							"panelName": "Humedad ambiente",
-							"topic": "topic-meteo-humi",
-							"qos": 0,
-							"unit": "%",
-							"logLength": 10,
-							"maxPersistence": 200,
-							"panelId": "panel_8",
-							"type": "log",
-							"mqttType": "sub",
-							"panelWidth": "50",
-							"hideTopic": true,
-							"panelMergeClass": "  merge-right  "
-						}
-					],
-					"lockPanels": false
-				}, {
-					"dashboardIcon": "wifi",
-					"dashboardName": "Config meteo station",
-					"dashboardId": "dashboard_1",
-					"dashboardPrefixTopic": "",
-					"panels": [{
-							"panelName": "Agregar un nuevo Wifi AP",
-							"panelId": "panel_0",
-							"type": "layout-decorator",
-							"mqttType": "none",
-							"titleAlignment": "center",
-							"fontSize": "20",
-							"panelWidth": "100"
-						}, {
-							"topic": "topic-meteo-cmd",
-							"panelName": "SSID",
-							"panelId": "panel_1",
-							"type": "text",
-							"mqttType": "pub",
-							"panelWidth": "66",
-							"retain": false,
-							"qos": 0,
-							"isJSONPayload": true,
-							"jsonEnvelope": "{\"cmd\": \"SET_AP_SSID\", \"value\": \"<text-payload>\"}",
-							"clearTextOnPublish": true
-						}, {
-							"showReceivedTimeStamp": false,
-							"panelName": "SSID result",
-							"topic": "topic-meteo-res-ap-ssid",
-							"hideTopic": true,
-							"showLatestMsgOnly": true,
-							"panelId": "panel_5",
-							"type": "log",
-							"mqttType": "sub",
-							"logLength": 2,
-							"panelWidth": "33",
-							"qos": 0,
-							"panelMergeClass": "    ",
-							"fontSize": "20"
-						}, {
-							"topic": "topic-meteo-cmd",
-							"panelName": "Password",
-							"panelId": "panel_6",
-							"type": "text",
-							"mqttType": "pub",
-							"panelWidth": "66",
-							"retain": false,
-							"qos": 0,
-							"isJSONPayload": true,
-							"jsonEnvelope": "{\"cmd\": \"SET_AP_PASS\", \"value\": \"<text-payload>\"}",
-							"clearTextOnPublish": true
-						}, {
-							"showReceivedTimeStamp": false,
-							"panelName": "Password result",
-							"topic": "topic-meteo-res-ap-pass",
-							"hideTopic": true,
-							"showLatestMsgOnly": true,
-							"panelId": "panel_7",
-							"type": "log",
-							"mqttType": "sub",
-							"logLength": 2,
-							"panelWidth": "33",
-							"qos": 0,
-							"panelMergeClass": "    ",
-							"fontSize": "20"
-						}, {
-							"panelName": "Guardar wifi AP",
-							"topic": "topic-meteo-cmd",
-							"payload": "SET_AP_SAVE",
-							"isJSONPayload": true,
-							"panelId": "panel_8",
-							"type": "button",
-							"mqttType": "pub",
-							"panelWidth": "66",
-							"buttonSize": "medium",
-							"retain": false,
-							"qos": 0,
-							"jsonEnvelope": "{\"cmd\": \"SET_AP_SAVE\", \"value\": \"\"}",
-							"noPayload": false,
-							"fitToPanelWidth": true,
-							"hasCustomIcon": false,
-							"icon": "assignment_turned_in",
-							"iconColor": "#9E9E9E"
-						}, {
-							"showReceivedTimeStamp": false,
-							"panelName": "Result",
-							"topic": "topic-meteo-res-ap-save",
-							"hideTopic": true,
-							"showLatestMsgOnly": true,
-							"panelId": "panel_9",
-							"type": "log",
-							"mqttType": "sub",
-							"logLength": 2,
-							"panelWidth": "33",
-							"qos": 0,
-							"panelMergeClass": "    ",
-							"fontSize": "20"
-						}, {
-							"panelName": "Status",
-							"panelId": "panel_4",
-							"type": "layout-decorator",
-							"mqttType": "none",
-							"titleAlignment": "center",
-							"fontSize": "20",
-							"panelWidth": "100"
-						}, {
-							"panelName": "Get IP",
-							"topic": "topic-meteo-cmd",
-							"payload": "GET_IP",
-							"panelId": "panel_2",
-							"type": "button",
-							"mqttType": "pub",
-							"panelWidth": "33",
-							"buttonSize": "medium",
-							"retain": false,
-							"qos": 0,
-							"isJSONPayload": true,
-							"jsonEnvelope": "{\"cmd\": \"GET_IP\", \"value\": \"\"}",
-							"fitToPanelWidth": true
-						}, {
-							"showReceivedTimeStamp": false,
-							"panelName": "IP",
-							"topic": "topic-meteo-res-ip",
-							"isJSONPayload": false,
-							"jsonPath": "{\"cmd\": \"RESEND\", \"value\": \"\"}",
-							"showLatestMsgOnly": true,
-							"panelId": "panel_3",
-							"type": "log",
-							"mqttType": "sub",
-							"logLength": 2,
-							"panelWidth": "66",
-							"qos": 0,
-							"fontSize": "20",
-							"hideTopic": true
-						}
-					],
-					"lockPanels": true,
-					"dashboardColor": "#607D8B"
-				}
-			],
-			"dashboardQuickAccess": false
-		}
-	]
+            "connectionTimeout": 30,
+            "keepAlive": 60,
+            "defaultDashboard": "dashboard_0",
+            "connectionId": "connection_0",
+            "dashboards": [
+                {
+                    "dashboardId": "dashboard_0",
+                    "dashboardName": "Estación meteorológica",
+                    "dashboardPrefixTopic": "",
+                    "dashboardIcon": "meter",
+                    "dashboardColor": "#2196F3",
+                    "panels": [
+                        {
+                            "firstColor": "#009600",
+                            "secondColor": "#fac800",
+                            "thirdColor": "#ff5722",
+                            "panelName": "Temp",
+                            "topic": "topic-meteo-temp",
+                            "payloadMin": 0,
+                            "payloadMax": 50,
+                            "firstColorEnd": 28,
+                            "secondColorEnd": 36,
+                            "qos": 0,
+                            "unit": "°C",
+                            "panelId": "panel_0",
+                            "type": "gauge",
+                            "mqttType": "sub",
+                            "panelWidth": "50"
+                        },
+                        {
+                            "panelName": "Pres",
+                            "topic": "topic-meteo-pres",
+                            "payloadMin": 900,
+                            "payloadMax": 1100,
+                            "unit": "hPa",
+                            "qos": 0,
+                            "panelId": "panel_1",
+                            "type": "vertical-meter",
+                            "mqttType": "sub",
+                            "panelWidth": "50"
+                        },
+                        {
+                            "unit": "%",
+                            "payloadMin": 0,
+                            "payloadMax": 100,
+                            "topic": "topic-meteo-humi",
+                            "panelName": "Humedad ambiente",
+                            "qos": 0,
+                            "panelId": "panel_7",
+                            "type": "linear-progress",
+                            "mqttType": "sub",
+                            "panelWidth": "100",
+                            "panelMergeClass": "    "
+                        },
+                        {
+                            "noOfDivisor": 5,
+                            "maxPersistence": 200,
+                            "comboItemList": [
+                                {
+                                    "color": "#0000ff",
+                                    "$$hashKey": "object:476",
+                                    "topic": "topic-meteo-temp",
+                                    "showPoints": true,
+                                    "label": "°C",
+                                    "panelTopic": "topic-meteo-temp",
+                                    "lineGraphData": [
+                                        {
+                                            "x": "2022-05-10T23:08:53.058Z",
+                                            "y": 23.2
+                                        }
+                                    ]
+                                }
+                            ],
+                            "xAxisTimeFormat": "HH:mm",
+                            "panelName": "Temperatura",
+                            "unit": "°C",
+                            "qos": 0,
+                            "panelId": "panel_2",
+                            "type": "line-graph",
+                            "mqttType": "sub",
+                            "panelWidth": "100"
+                        },
+                        {
+                            "noOfDivisor": 5,
+                            "maxPersistence": 200,
+                            "comboItemList": [
+                                {
+                                    "color": "#54712a",
+                                    "$$hashKey": "object:476",
+                                    "topic": "topic-meteo-pres",
+                                    "showPoints": true,
+                                    "label": "hPa",
+                                    "panelTopic": "topic-meteo-pres",
+                                    "lineGraphData": [
+                                        {
+                                            "x": "2022-05-10T23:08:53.367Z",
+                                            "y": 1014.73
+                                        }
+                                    ]
+                                }
+                            ],
+                            "xAxisTimeFormat": "HH:mm",
+                            "panelName": "Presión atmosférica",
+                            "unit": "",
+                            "qos": 0,
+                            "panelId": "panel_6",
+                            "type": "line-graph",
+                            "mqttType": "sub",
+                            "panelWidth": "100"
+                        },
+                        {
+                            "noOfDivisor": 5,
+                            "maxPersistence": 200,
+                            "comboItemList": [
+                                {
+                                    "color": "#d70206",
+                                    "$$hashKey": "object:2066",
+                                    "topic": "topic-meteo-humi",
+                                    "label": "%",
+                                    "showPoints": true,
+                                    "panelTopic": "topic-meteo-humi",
+                                    "lineGraphData": [
+                                        {
+                                            "x": "2022-05-10T23:08:53.372Z",
+                                            "y": 53
+                                        }
+                                    ]
+                                }
+                            ],
+                            "xAxisTimeFormat": "HH:mm",
+                            "panelName": "Humedad ambiente",
+                            "unit": "%",
+                            "qos": 0,
+                            "panelId": "panel_9",
+                            "type": "line-graph",
+                            "mqttType": "sub",
+                            "panelWidth": "100"
+                        },
+                        {
+                            "panelName": "REFRESH",
+                            "topic": "topic-meteo-cmd",
+                            "payload": "RESEND",
+                            "hasCustomIcon": true,
+                            "icon": "rotate_left",
+                            "iconColor": "#9E9E9E",
+                            "buttonSize": "medium",
+                            "fitToPanelWidth": true,
+                            "qos": 0,
+                            "panelId": "panel_3",
+                            "type": "button",
+                            "mqttType": "pub",
+                            "panelWidth": "100",
+                            "retain": false,
+                            "isJSONPayload": true,
+                            "jsonEnvelope": "{\"cmd\": \"RESEND\", \"value\": \"\"}"
+                        },
+                        {
+                            "showReceivedTimeStamp": true,
+                            "panelName": "Temperatura",
+                            "topic": "topic-meteo-temp",
+                            "logLength": 10,
+                            "maxPersistence": 200,
+                            "unit": "°C",
+                            "hideTopic": true,
+                            "qos": 0,
+                            "panelId": "panel_4",
+                            "type": "log",
+                            "mqttType": "sub",
+                            "panelWidth": "50"
+                        },
+                        {
+                            "showReceivedTimeStamp": true,
+                            "panelName": "Temperatura 2",
+                            "topic": "topic-meteo-temp2",
+                            "logLength": 10,
+                            "maxPersistence": 200,
+                            "unit": "°C",
+                            "qos": 0,
+                            "panelId": "panel_10",
+                            "type": "log",
+                            "mqttType": "sub",
+                            "panelWidth": "50",
+                            "hideTopic": true,
+                            "panelMergeClass": " merge-right  "
+                        },
+                        {
+                            "showReceivedTimeStamp": true,
+                            "panelName": "Presión",
+                            "topic": "topic-meteo-pres",
+                            "qos": 0,
+                            "unit": "hPa",
+                            "hideTopic": true,
+                            "logLength": 10,
+                            "maxPersistence": 200,
+                            "panelId": "panel_5",
+                            "type": "log",
+                            "mqttType": "sub",
+                            "panelWidth": "50"
+                        },
+                        {
+                            "showReceivedTimeStamp": true,
+                            "panelName": "Humedad ambiente",
+                            "topic": "topic-meteo-humi",
+                            "qos": 0,
+                            "unit": "%",
+                            "logLength": 10,
+                            "maxPersistence": 200,
+                            "panelId": "panel_8",
+                            "type": "log",
+                            "mqttType": "sub",
+                            "panelWidth": "50",
+                            "hideTopic": true,
+                            "panelMergeClass": "  merge-right  "
+                        }
+                    ],
+                    "lockPanels": true
+                },
+                {
+                    "dashboardIcon": "wifi",
+                    "dashboardName": "Config meteo station",
+                    "dashboardId": "dashboard_1",
+                    "dashboardPrefixTopic": "",
+                    "panels": [
+                        {
+                            "panelName": "Add a new Wifi AP",
+                            "panelId": "panel_0",
+                            "type": "layout-decorator",
+                            "mqttType": "none",
+                            "titleAlignment": "center",
+                            "fontSize": "20",
+                            "panelWidth": "100"
+                        },
+                        {
+                            "topic": "topic-meteo-cmd",
+                            "panelName": "SSID",
+                            "panelId": "panel_1",
+                            "type": "text",
+                            "mqttType": "pub",
+                            "panelWidth": "66",
+                            "retain": false,
+                            "qos": 0,
+                            "isJSONPayload": true,
+                            "jsonEnvelope": "{\"cmd\": \"SET_AP_SSID\", \"value\": \"<text-payload>\"}",
+                            "clearTextOnPublish": true
+                        },
+                        {
+                            "showReceivedTimeStamp": false,
+                            "panelName": "SSID result",
+                            "topic": "topic-meteo-res-ap-ssid",
+                            "hideTopic": true,
+                            "showLatestMsgOnly": true,
+                            "panelId": "panel_5",
+                            "type": "log",
+                            "mqttType": "sub",
+                            "logLength": 1,
+                            "panelWidth": "33",
+                            "qos": 0,
+                            "panelMergeClass": "    ",
+                            "fontSize": "20",
+                            "maxPersistence": 1
+                        },
+                        {
+                            "topic": "topic-meteo-cmd",
+                            "panelName": "Password",
+                            "panelId": "panel_6",
+                            "type": "text",
+                            "mqttType": "pub",
+                            "panelWidth": "66",
+                            "retain": false,
+                            "qos": 0,
+                            "isJSONPayload": true,
+                            "jsonEnvelope": "{\"cmd\": \"SET_AP_PASS\", \"value\": \"<text-payload>\"}",
+                            "clearTextOnPublish": true
+                        },
+                        {
+                            "showReceivedTimeStamp": false,
+                            "panelName": "Password result",
+                            "topic": "topic-meteo-res-ap-pass",
+                            "hideTopic": true,
+                            "showLatestMsgOnly": true,
+                            "panelId": "panel_7",
+                            "type": "log",
+                            "mqttType": "sub",
+                            "logLength": 2,
+                            "panelWidth": "33",
+                            "qos": 0,
+                            "panelMergeClass": "    ",
+                            "fontSize": "20"
+                        },
+                        {
+                            "panelName": "Save wifi AP",
+                            "topic": "topic-meteo-cmd",
+                            "payload": "SET_AP_SAVE",
+                            "isJSONPayload": true,
+                            "panelId": "panel_8",
+                            "type": "button",
+                            "mqttType": "pub",
+                            "panelWidth": "66",
+                            "buttonSize": "medium",
+                            "retain": false,
+                            "qos": 0,
+                            "jsonEnvelope": "{\"cmd\": \"SET_AP_SAVE\", \"value\": \"\"}",
+                            "noPayload": false,
+                            "fitToPanelWidth": true,
+                            "hasCustomIcon": false,
+                            "icon": "assignment_turned_in",
+                            "iconColor": "#9E9E9E",
+                            "confirmBeforePublish": true,
+                            "confirmationMessage": "Confirm save AP?"
+                        },
+                        {
+                            "showReceivedTimeStamp": false,
+                            "panelName": "Result",
+                            "topic": "topic-meteo-res-ap-save",
+                            "hideTopic": true,
+                            "showLatestMsgOnly": true,
+                            "panelId": "panel_9",
+                            "type": "log",
+                            "mqttType": "sub",
+                            "logLength": 2,
+                            "panelWidth": "33",
+                            "qos": 0,
+                            "panelMergeClass": "    ",
+                            "fontSize": "20"
+                        },
+                        {
+                            "panelName": "Status",
+                            "panelId": "panel_4",
+                            "type": "layout-decorator",
+                            "mqttType": "none",
+                            "titleAlignment": "center",
+                            "fontSize": "20",
+                            "panelWidth": "100"
+                        },
+                        {
+                            "panelName": "Get IP",
+                            "topic": "topic-meteo-cmd",
+                            "payload": "GET_IP",
+                            "panelId": "panel_2",
+                            "type": "button",
+                            "mqttType": "pub",
+                            "panelWidth": "33",
+                            "buttonSize": "medium",
+                            "retain": false,
+                            "qos": 0,
+                            "isJSONPayload": true,
+                            "jsonEnvelope": "{\"cmd\": \"GET_IP\", \"value\": \"\"}",
+                            "fitToPanelWidth": true
+                        },
+                        {
+                            "showReceivedTimeStamp": false,
+                            "panelName": "IP",
+                            "topic": "topic-meteo-res-ip",
+                            "isJSONPayload": false,
+                            "jsonPath": "{\"cmd\": \"RESEND\", \"value\": \"\"}",
+                            "showLatestMsgOnly": true,
+                            "panelId": "panel_3",
+                            "type": "log",
+                            "mqttType": "sub",
+                            "logLength": 2,
+                            "panelWidth": "66",
+                            "qos": 0,
+                            "fontSize": "20",
+                            "hideTopic": true
+                        },
+                        {
+                            "panelName": "Data logger",
+                            "titleAlignment": "center",
+                            "panelId": "panel_10",
+                            "type": "layout-decorator",
+                            "mqttType": "none",
+                            "fontSize": "20",
+                            "panelWidth": "100"
+                        },
+                        {
+                            "panelName": "Get Log",
+                            "topic": "topic-meteo-cmd",
+                            "payload": "GET_LOG",
+                            "panelId": "panel_11",
+                            "type": "button",
+                            "mqttType": "pub",
+                            "panelWidth": "33",
+                            "buttonSize": "medium",
+                            "retain": false,
+                            "qos": 0,
+                            "isJSONPayload": true,
+                            "jsonEnvelope": "{\"cmd\": \"GET_LOG\", \"value\": \"\"}",
+                            "fitToPanelWidth": true
+                        },
+                        {
+                            "showReceivedTimeStamp": false,
+                            "panelName": "Last data log date",
+                            "topic": "topic-meteo-res-log",
+                            "isJSONPayload": false,
+                            "jsonPath": "{\"cmd\": \"RESEND\", \"value\": \"\"}",
+                            "showLatestMsgOnly": true,
+                            "panelId": "panel_12",
+                            "type": "log",
+                            "mqttType": "sub",
+                            "logLength": 2,
+                            "panelWidth": "66",
+                            "qos": 0,
+                            "fontSize": "20",
+                            "hideTopic": true
+                        },
+                        {
+                            "panelName": "Get Size",
+                            "topic": "topic-meteo-cmd",
+                            "payload": "GET_LOG_SIZE",
+                            "panelId": "panel_13",
+                            "type": "button",
+                            "mqttType": "pub",
+                            "panelWidth": "33",
+                            "buttonSize": "medium",
+                            "retain": false,
+                            "qos": 0,
+                            "isJSONPayload": true,
+                            "jsonEnvelope": "{\"cmd\": \"GET_LOG_SIZE\", \"value\": \"\"}",
+                            "fitToPanelWidth": true
+                        },
+                        {
+                            "showReceivedTimeStamp": false,
+                            "panelName": "Data log size",
+                            "topic": "topic-meteo-res-logsize",
+                            "isJSONPayload": false,
+                            "jsonPath": "{\"cmd\": \"RESEND\", \"value\": \"\"}",
+                            "showLatestMsgOnly": true,
+                            "panelId": "panel_14",
+                            "type": "log",
+                            "mqttType": "sub",
+                            "logLength": 2,
+                            "panelWidth": "66",
+                            "qos": 0,
+                            "fontSize": "20",
+                            "hideTopic": true
+                        }
+                    ],
+                    "lockPanels": true,
+                    "dashboardColor": "#607D8B"
+                }
+            ],
+            "dashboardQuickAccess": false
+        }
+    ]
 }

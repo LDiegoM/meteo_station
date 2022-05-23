@@ -87,6 +87,22 @@ bool Storage::deleteFile(const char *path) {
     return m_fs->remove(path);
 }
 
+size_t Storage::fileSize(const char *path) {
+    size_t size = 0;
+
+    File file = m_fs->open(path, FILE_READ);
+    if (!file) {
+        Serial.println("Failed to open file to get size");
+        return size;
+    }
+    delay(100);
+
+    size = file.size();
+    file.close();
+
+    return size;
+}
+
 FS* Storage::fs() {
     return m_fs;
 }
