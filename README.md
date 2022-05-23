@@ -132,6 +132,7 @@ Notice that the settings include MQTT and Wifi APs passwords as plain text. In f
 ## 0.0.8 - 2022-05-10
 
 - Add capability to get current log file size from MQTT.
+- Remove ArduinoJson and DHT Sensor from stored libraries.
 
 ## 0.0.7 - 2022-05-10
 
