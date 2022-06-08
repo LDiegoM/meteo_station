@@ -1,8 +1,7 @@
 #include <storage.h>
 
 //////////////////// Constructor
-Storage::Storage(uint8_t sdCsPin, TFT_ILI9163C *tft) {
-    m_sdCsPin = sdCsPin;
+Storage::Storage(TFT_ILI9163C *tft) {
     m_tft = tft;
 }
 
@@ -12,32 +11,22 @@ bool Storage::begin() {
     timeOut->start();
 
     m_tft->setCursor(2, m_tft->getCursorY() + 20);
-    m_tft->print("Mounting SD");
+    m_tft->print("Mounting FS");
 
     // Initialize SD card
-    while(!SD.begin(m_sdCsPin)) {
+    while(!LittleFS.begin()) {
         if (timeOut->isTime()) {
             m_tft->setCursor(2, m_tft->getCursorY() + 20);
-            m_tft->print("Insert SD");
+            m_tft->print("Storage err");
             timeOut->stop();
             free(timeOut);
             delay(1000);
             return false;
         }
     }
-    if (SD.cardType() == CARD_NONE) {
-        m_tft->setCursor(2, m_tft->getCursorY() + 20);
-        m_tft->print("Insert SD");
-        timeOut->stop();
-        free(timeOut);
-        SD.end();
-        delay(1000);
-        return false;
-    }
 
     m_tft->setCursor(2, m_tft->getCursorY() + 20);
-    m_tft->print("SD mount OK");
-    m_fs = &SD;
+    m_tft->print("FS mount OK");
     timeOut->stop();
     free(timeOut);
     delay(1000);
@@ -47,11 +36,11 @@ bool Storage::begin() {
 char* Storage::readAll(const char *path) {
     uint8_t* buffer;
     buffer = (uint8_t*)malloc(1);  // Allocate memory for the file and a terminating null char.
-    buffer[0] = '\0';               // Add the terminating null char.
+    buffer[0] = '\0';              // Add the terminating null char.
 
-    File file = m_fs->open(path, FILE_READ);
+    File file = LittleFS.open(path, FILE_READ);
     if (!file) {
-        Serial.println("Failed to open file for reading");
+        Serial.println("Failed to open file for read");
         return (char*) buffer;
     }
     delay(100);
@@ -67,9 +56,9 @@ char* Storage::readAll(const char *path) {
 
 // Write to the SD card
 bool Storage::writeFile(const char *path, const char *message) {
-    File file = m_fs->open(path, FILE_APPEND);
+    File file = LittleFS.open(path, FILE_WRITE, true);
     if (!file) {
-        Serial.println("Failed to open file for writing");
+        Serial.println("Failed to open file for write");
         return false;
     }
     delay(100);
@@ -83,14 +72,31 @@ bool Storage::writeFile(const char *path, const char *message) {
     return flgOk;
 }
 
-bool Storage::deleteFile(const char *path) {
-    return m_fs->remove(path);
+bool Storage::appendFile(const char *path, const char *message) {
+    File file = LittleFS.open(path, FILE_APPEND, true);
+    if (!file) {
+        Serial.println("Failed to open file for append");
+        return false;
+    }
+    delay(100);
+
+    bool flgOk = false;
+    if (file.print(message) > 0)
+        flgOk = true;
+
+    file.close();
+
+    return flgOk;
+}
+
+bool Storage::remove(const char *path) {
+    return LittleFS.remove(path);
 }
 
 size_t Storage::fileSize(const char *path) {
     size_t size = 0;
 
-    File file = m_fs->open(path, FILE_READ);
+    File file = LittleFS.open(path, FILE_READ);
     if (!file) {
         Serial.println("Failed to open file to get size");
         return size;
@@ -103,6 +109,10 @@ size_t Storage::fileSize(const char *path) {
     return size;
 }
 
-FS* Storage::fs() {
-    return m_fs;
+bool Storage::exists(const char *path) {
+    return LittleFS.exists(path);
+}
+
+File Storage::open(const char *path) {
+    return LittleFS.open(path);
 }

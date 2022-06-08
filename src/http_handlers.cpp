@@ -34,16 +34,19 @@ void HttpHandlers::loop() {
 /////////// HTTP Handlers
 void HttpHandlers::handleDownloadLogs() {
     Serial.println("Starting logs download");
-    if (!m_storage->fs()->exists(m_settings->getSettings().storage.outputPath.c_str())) {
+    if (!m_storage->exists(m_settings->getSettings().storage.outputPath.c_str())) {
         m_server->send(404, "text/plain", "not found");
+        return;
     }
 
     Serial.println("File exists");
 
-    File file = m_storage->fs()->open(m_settings->getSettings().storage.outputPath.c_str());
-    if (!file)
+    File file = m_storage->open(m_settings->getSettings().storage.outputPath.c_str());
+    if (!file) {
         m_server->send(500, "text/plain", "fail to open log file");
-    
+        return;
+    }
+
     Serial.println("File opened - size: " + String(file.size()));
     String dataType = "application/octet-stream";
 
@@ -60,12 +63,13 @@ void HttpHandlers::handleDownloadLogs() {
 
 bool HttpHandlers::handleDeleteLogs() {
     Serial.println("Starting logs delete");
-    if (!m_storage->fs()->exists(m_settings->getSettings().storage.outputPath.c_str())) {
+    if (!m_storage->exists(m_settings->getSettings().storage.outputPath.c_str())) {
         m_server->send(404, "text/plain", "not found");
+        return false;
     }
 
     Serial.println("File exists");
-    bool flgOK = m_storage->fs()->remove(m_settings->getSettings().storage.outputPath.c_str());
+    bool flgOK = m_storage->remove(m_settings->getSettings().storage.outputPath.c_str());
     if (flgOK)
         m_server->send(204);
     else
@@ -75,14 +79,11 @@ bool HttpHandlers::handleDeleteLogs() {
 }
 
 void HttpHandlers::handleGetSettings() {
-    const char* SETTINGS_FILE = "/meteo_settings.json";
-
-    Serial.println("Starting get settings");
-    if (!m_storage->fs()->exists(SETTINGS_FILE)) {
+    if (!m_storage->exists(SETTINGS_FILE)) {
         m_server->send(404, "text/plain", "not found");
+        return;
     }
 
-    Serial.println("File exists");
     String content = m_storage->readAll(SETTINGS_FILE);
     m_server->send(200, "application/json", content);
 }

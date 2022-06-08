@@ -1,5 +1,7 @@
 #include <settings.h>
 
+const char* SETTINGS_FILE = "/settings/meteo_settings.json";
+
 //////////////////// Constructor
 Settings::Settings(Storage *storage, TFT_ILI9163C *tft) {
     m_storage = storage;
@@ -32,7 +34,7 @@ settings_t Settings::getSettings() {
 }
 
 bool Settings::saveSettings() {
-    m_storage->deleteFile(SETTINGS_FILE);
+    m_storage->remove(SETTINGS_FILE);
     String json = createJson();
     if (json.equals(""))
         return false;

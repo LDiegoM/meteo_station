@@ -28,10 +28,10 @@ struct settings_t {
     } dateTime;
 };
 
+extern const char* SETTINGS_FILE;
+
 class Settings {
     private:
-        const char* SETTINGS_FILE = "/meteo_settings.json";
-
         Storage *m_storage;
         settings_t m_settings;
         bool m_settingsOK;

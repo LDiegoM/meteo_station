@@ -12,7 +12,7 @@
         {"ssid": "wifi_ap2_ssid", "password": "wifi_ap2_password"}
     ],
     "storage":{
-        "output_path": "/meteo_data.txt",
+        "output_path": "/logs/meteo_data.txt",
         "write_period_seconds": 1800
     },
     "date_time":{
