@@ -134,6 +134,8 @@ Notice that the settings include MQTT and Wifi APs passwords as plain text. In f
 
 - Change storage to LittleFS, due to microSD is unstable.
 - Add get free storage functionality and send to MQTT.
+- Add capability to have empty settings.
+- If no wifi available, starts AP to allow configuration.
 
 ## 0.0.8 - 2022-05-10
 

@@ -18,7 +18,11 @@ bool WiFiConnection::begin() {
                            m_settings->getSettings().wifiAPs[i].password.c_str());
     }
 
-    return connect();
+    if (!connect()) {
+        // If no wifi ap could connect, then begin default AP to enable configuration.
+        return beginAP();
+    }
+    return true;
 }
 
 bool WiFiConnection::connect() {
@@ -38,8 +42,25 @@ bool WiFiConnection::connect() {
     return true;
 }
 
+bool WiFiConnection::beginAP() {
+    m_tft->setCursor(2, m_tft->getCursorY() + 20);
+    WiFi.mode(WIFI_AP);
+    if (!WiFi.softAP(SSID_AP)) {
+        m_tft->print("AP Error");
+        delay(1000);
+        return false;
+    }
+    m_tft->print("AP: " + String(SSID_AP));
+    delay(1000);
+    return true;
+}
+
 bool WiFiConnection::isConnected() {
     return WiFi.status() == WL_CONNECTED;
+}
+
+bool WiFiConnection::isModeAP() {
+    return WiFi.getMode() == WIFI_AP;
 }
 
 String WiFiConnection::getIP() {

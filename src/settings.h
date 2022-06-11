@@ -39,6 +39,7 @@ class Settings {
 
         bool readSettings();
         String createJson();
+        void defaultSettings();
 
     public:
         Settings(Storage *storage, TFT_ILI9163C *tft);

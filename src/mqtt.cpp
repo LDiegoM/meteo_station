@@ -15,7 +15,7 @@ MQTT::MQTT(WiFiConnection *wifi, Sensors *sensors, Settings *settings, TFT_ILI91
 
 //////////////////// Public methods implementation
 bool MQTT::begin() {
-    if (!m_settings->isSettingsOK())
+    if (!m_settings->isSettingsOK() || m_wifi->isModeAP())
         return false;
 
     m_secureClient = new WiFiClientSecure();
@@ -33,7 +33,7 @@ bool MQTT::begin() {
 
 bool MQTT::connect() {
     m_connected = false;
-    if (!m_settings->isSettingsOK())
+    if (!m_settings->isSettingsOK() || m_wifi->isModeAP())
         return false;
 
     if (m_mqttClient->connected()) {
@@ -78,7 +78,7 @@ bool MQTT::isConnected() {
 }
 
 void MQTT::loop() {
-    if (!m_settings->isSettingsOK())
+    if (!m_settings->isSettingsOK() || m_wifi->isModeAP())
         return;
 
     if (!m_mqttClient->connected()) {
