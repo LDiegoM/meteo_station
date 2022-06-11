@@ -18,7 +18,7 @@ Topics list:
 - `topic-meteo-pres`: pressure value from BMP180.
 - `topic-meteo-humi`: humidity value from DHT11.
 
-Meteo station logs measures in the microSD card, in the file `/meteo_data.txt` (defined in settings file).
+Meteo station logs measures in the SPIFFS memory using LittleFS, in the file `/logs/meteo_data.txt` (defined in settings file).
 
 Meteo station shows information in a 128x128 pixels display, in this format:
 
@@ -26,9 +26,9 @@ Meteo station shows information in a 128x128 pixels display, in this format:
 
 # Application settings
 
-To configure Meteo station write a json file in a microSD card. Below is an example of settings file.
+To configure Meteo station write a json file in a SPIFFS memory. Below is an example of settings file.
 
-Name: `/meteo_settings.json`
+Path: `/settings/meteo_settings.json`
 ```json
 {
     "mqtt":{
@@ -50,7 +50,7 @@ Name: `/meteo_settings.json`
         }
     ],
     "storage":{
-        "output_path": "/meteo_data.txt",
+        "output_path": "/logs/meteo_data.txt",
         "write_period_seconds": 1800
     },
     "date_time":{
@@ -99,7 +99,7 @@ Status resopnse table:
 | HTTP status code | Meaning |
 |---               |---      |
 |       500        | There was an internal error opening file at the device.|
-|       404        | Logs file wasn't found in SD card. |
+|       404        | Logs file wasn't found in SPIFFS memory. |
 |       200        | Logs file was successfully downloaded. |
 
 - DELETE `/logs`: Allow to completely delete current weather measures. It'll log a new measure at the deletion moment.
@@ -109,7 +109,7 @@ Status resopnse table:
 | HTTP status code | Meaning |
 |---               |---      |
 |       500        | There was an internal error deleting file at the device. |
-|       404        | Logs file wasn't found in SD card. |
+|       404        | Logs file wasn't found in SPIFFS memory. |
 |       204        | Logs file was successfully removed. |
 
 - GET `/settings`: Returns current settings as they're written in setings file in the response body.
@@ -118,7 +118,7 @@ Status resopnse table:
 
 | HTTP status code | Meaning |
 |---               |---      |
-|       404        | Settings file wasn't found in SD card. |
+|       404        | Settings file wasn't found in SPIFFS memory. |
 |       200        | Settings were successfully returned to client. |
 
 Notice that the settings include MQTT and Wifi APs passwords as plain text. In future version it'll be encrypted.
@@ -128,6 +128,10 @@ Notice that the settings include MQTT and Wifi APs passwords as plain text. In f
 - Main idea, development and functional prototype by Diego M. Lopez (ldiegom@gmail.com)
 
 # Changelog
+
+## Unreleased
+
+- Change storage to LittleFS, due to microSD is unstable.
 
 ## 0.0.8 - 2022-05-10
 

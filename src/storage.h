@@ -1,27 +1,27 @@
 #ifndef storage_h
 #define storage_h
 
-#include <FS.h>
-#include <SD.h>
-#include <SPI.h>
+#include <Arduino.h>
+#include <LittleFS.h>
 #include <TFT_ILI9163C.h>
 #include <timer.h>
 
 class Storage {
     private:
-        FS *m_fs;
-        uint8_t m_sdCsPin;
         TFT_ILI9163C *m_tft;
 
     public:
-        Storage(uint8_t sdCsPin, TFT_ILI9163C *tft);
+        Storage(TFT_ILI9163C *tft);
 
         bool begin();
         char* readAll(const char *path);
+        // writeFile ovewrites all file content.
         bool writeFile(const char *path, const char *message);
-        bool deleteFile(const char *path);
+        bool appendFile(const char *path, const char *message);
+        bool remove(const char *path);
         size_t fileSize(const char *path);
-        FS* fs();
+        bool exists(const char *path);
+        File open(const char *path);
 };
 
 #endif

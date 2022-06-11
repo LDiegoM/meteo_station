@@ -8,7 +8,6 @@ This document describes the electronic construction of this project.
 - 1x color display 1.44' SPI 128x128 ILI9163.
 - 1x DHT11 sensor.
 - 1x BMP180 sensor.
-- 1x microSD card adapter.
 - 1x resistor 5k ohms.
 
 ## Electric diagram

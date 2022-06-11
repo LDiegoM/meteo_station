@@ -35,8 +35,6 @@
 #define DHTPIN 17
 #define DHTTYPE DHT11
 
-#define SD_CS 5  // SD card module cable select pin
-
 TFT_ILI9163C* tft;
 
 Sensors *sensors;
@@ -152,7 +150,7 @@ void setup(void) {
         tft->setCursor(2, 0);
     }
 
-    storage = new Storage(SD_CS, tft);
+    storage = new Storage(tft);
     while (!storage->begin()) {
         tft->fillScreen(BLACK);
         tft->setTextColor(WHITE);
