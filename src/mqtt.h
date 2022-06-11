@@ -16,6 +16,7 @@
 #include <sensors.h>
 #include <settings.h>
 #include <data_logger.h>
+#include <storage.h>
 
 class MQTT {
     private:
@@ -24,6 +25,7 @@ class MQTT {
         Settings *m_settings;
         TFT_ILI9163C *m_tft;
         DataLogger *m_dataLogger;
+        Storage *m_storage;
 
         WiFiClientSecure *m_secureClient;
 
@@ -42,6 +44,7 @@ class MQTT {
         const char* MQTT_TOPIC_RES_AP_PASS = "topic-meteo-res-ap-pass";
         const char* MQTT_TOPIC_RES_AP_SAVE = "topic-meteo-res-ap-save";
         const char* MQTT_TOPIC_RES_LOGSIZE = "topic-meteo-res-logsize";
+        const char* MQTT_TOPIC_RES_FREESTO = "topic-meteo-res-freesto";
 
         MQTT_CALLBACK_SIGNATURE;
 
@@ -59,7 +62,7 @@ class MQTT {
 
     public:
         MQTT(WiFiConnection *wifi, Sensors *sensors, Settings *settings, TFT_ILI9163C *tft,
-             DataLogger *dataLogger, MQTT_CALLBACK_SIGNATURE);
+             DataLogger *dataLogger, Storage *storage, MQTT_CALLBACK_SIGNATURE);
         
         bool begin();
         bool connect();

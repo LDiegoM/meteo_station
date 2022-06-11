@@ -189,7 +189,7 @@ void setup(void) {
     dataLogger = new DataLogger(sensors, dateTime, storage, config.storage.outputPath, config.storage.writePeriod);
     dataLogger->logData();
 
-    mqtt = new MQTT(wifi, sensors, settings, tft, dataLogger, messageReceived);
+    mqtt = new MQTT(wifi, sensors, settings, tft, dataLogger, storage, messageReceived);
     if (!mqtt->begin()) {
         Serial.println("MQTT is not connected");
         return;
