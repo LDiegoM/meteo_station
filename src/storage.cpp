@@ -116,3 +116,16 @@ bool Storage::exists(const char *path) {
 File Storage::open(const char *path) {
     return LittleFS.open(path);
 }
+
+String Storage::getSize() {
+    return String((float) LittleFS.totalBytes() / 1024) + " kb";
+}
+
+String Storage::getUsed() {
+    return String((float) LittleFS.usedBytes() / 1024) + " kb";
+
+}
+
+String Storage::getFree() {
+    return String((float) (LittleFS.totalBytes() - LittleFS.usedBytes()) / 1024) + " kb";
+}

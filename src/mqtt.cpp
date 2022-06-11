@@ -2,12 +2,13 @@
 
 //////////////////// Constructor
 MQTT::MQTT(WiFiConnection *wifi, Sensors *sensors, Settings *settings, TFT_ILI9163C *tft,
-           DataLogger *dataLogger, MQTT_CALLBACK_SIGNATURE) {
+           DataLogger *dataLogger, Storage *storage, MQTT_CALLBACK_SIGNATURE) {
     m_wifi = wifi;
     m_sensors = sensors;
     m_settings = settings;
     m_tft = tft;
     m_dataLogger = dataLogger;
+    m_storage = storage;
     this->callback = callback;
     m_connected = false;
 }
@@ -122,6 +123,8 @@ void MQTT::processReceivedMessage(char* topic, uint8_t* payload, unsigned int le
         m_mqttClient->publish(MQTT_TOPIC_RES_LOG, m_dataLogger->getLastLogTime().c_str(), false);
     } else if (m_command.cmd.equals("GET_LOG_SIZE")) {
         m_mqttClient->publish(MQTT_TOPIC_RES_LOGSIZE, String(m_dataLogger->logSize()).c_str(), false);
+    } else if (m_command.cmd.equals("GET_STO_FREE")) {
+        m_mqttClient->publish(MQTT_TOPIC_RES_FREESTO, (m_storage->getFree() + " of " + m_storage->getSize()).c_str(), false);
     } else if (m_command.cmd.equals("SET_AP_SSID")) {
         if (m_command.value.equals("")) {
             m_new_wifiAP.ssid = "";

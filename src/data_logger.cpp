@@ -31,8 +31,8 @@ String DataLogger::getLastLogTime() {
     return m_lastLogTime;
 }
 
-float DataLogger::logSize() {
-    return ((float) m_storage->fileSize(m_filePath.c_str())) / 1024;
+String DataLogger::logSize() {
+    return String(((float) m_storage->fileSize(m_filePath.c_str())) / 1024) + " kb";
 }
 
 //////////////////// Private methods implementation

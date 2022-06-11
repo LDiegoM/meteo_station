@@ -27,7 +27,7 @@ class DataLogger {
         String getLastLogTime();
 
         // logSize returns the size of the log file in KB
-        float logSize();
+        String logSize();
 };
 
 #endif

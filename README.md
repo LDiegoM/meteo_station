@@ -74,6 +74,7 @@ Theese are the available commands:
 - `GET_IP`: value field doesn't matters. The application will publish current local IP to topic `topic-meteo-res-ip`.
 - `GET_LOG`: value field doesn't matters. The application will publish last successfully written log timestamp to topic `topic-meteo-res-log`, in format `yyyy-mm-dd hh:mm:ss`.
 - `GET_LOG_SIZE`: value field doesn't matters. The application will publish current log file size to topic `topic-meteo-res-logsize`.
+- `GET_STO_FREE`: value field doesn't matters. The application will publish current storage free size to topic `topic-meteo-res-freesto`.
 - `SET_AP_SSID`: value field should be the ssid of the wifi AP to add to settings. The application will publish `OK` or `ERROR: message` to the topic `topic-meteo-res-ap-ssid`. SSID should not be empty nor currently present in settings-
 - `SET_AP_PASS`: value field should be the password of the wifi AP to add to settings. The application will publish `OK` or `ERROR: message` to the topic `topic-meteo-res-ap-pass`. Password could be empty.
 - `SET_AP_SAVE`: value field doesn't matters. The application will save the new wifi AP with given ssid and password using `SET_AP_SSID` and `SET_AP_PASS` commands, and publish `OK` or `ERROR: message` to the topic `topic-meteo-res-ap-save`.
@@ -132,6 +133,7 @@ Notice that the settings include MQTT and Wifi APs passwords as plain text. In f
 ## Unreleased
 
 - Change storage to LittleFS, due to microSD is unstable.
+- Add get free storage functionality and send to MQTT.
 
 ## 0.0.8 - 2022-05-10
 

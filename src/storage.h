@@ -22,6 +22,9 @@ class Storage {
         size_t fileSize(const char *path);
         bool exists(const char *path);
         File open(const char *path);
+        String getSize();
+        String getUsed();
+        String getFree();
 };
 
 #endif

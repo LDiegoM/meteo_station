@@ -380,6 +380,37 @@
                             "hideTopic": true
                         },
                         {
+                            "panelName": "Get free Sto",
+                            "topic": "topic-meteo-cmd",
+                            "payload": "GET_STO_FREE",
+                            "panelId": "panel_15",
+                            "type": "button",
+                            "mqttType": "pub",
+                            "panelWidth": "50",
+                            "buttonSize": "medium",
+                            "retain": false,
+                            "qos": 0,
+                            "isJSONPayload": true,
+                            "jsonEnvelope": "{\"cmd\": \"GET_STO_FREE\", \"value\": \"\"}",
+                            "fitToPanelWidth": true
+                        },
+                        {
+                            "showReceivedTimeStamp": false,
+                            "panelName": "Free storage size",
+                            "topic": "topic-meteo-res-freesto",
+                            "isJSONPayload": false,
+                            "jsonPath": "{\"cmd\": \"RESEND\", \"value\": \"\"}",
+                            "showLatestMsgOnly": true,
+                            "panelId": "panel_16",
+                            "type": "log",
+                            "mqttType": "sub",
+                            "logLength": 2,
+                            "panelWidth": "50",
+                            "qos": 0,
+                            "fontSize": "20",
+                            "hideTopic": true
+                        },
+                        {
                             "panelName": "Data logger",
                             "titleAlignment": "center",
                             "panelId": "panel_10",
