@@ -7,6 +7,8 @@
 
 class WiFiConnection {
     private:
+        const char *SSID_AP = "meteo_station";
+
         WiFiMulti *m_wifiMulti;
         Settings *m_settings;
         TFT_ILI9163C *m_tft;
@@ -16,7 +18,9 @@ class WiFiConnection {
 
         bool begin();
         bool connect();
+        bool beginAP();
         bool isConnected();
+        bool isModeAP();
         String getIP();
 };
 

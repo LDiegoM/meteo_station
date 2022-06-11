@@ -64,6 +64,9 @@ void deleteLogs();
 void getSettings();
 
 void printDateTime() {
+    if (!wifi->isConnected())
+        return;
+
     if(!dateTime->refresh()) {
         Serial.println("Failed to refresh time");
         return;
@@ -134,7 +137,7 @@ void getSettings() {
 
 void setup(void) {
     Serial.begin(115200);
-    Serial.println("begin setup - " + String(ESP.getFreeHeap()));
+    Serial.println("begin setup - free mem: " + String((float) ESP.getFreeHeap() / 1024) + " kb");
 
     tft = new TFT_ILI9163C(TFT_CS, TFT_DC);
     tft->begin();
@@ -162,6 +165,8 @@ void setup(void) {
         Serial.println("Settings are not ok");
         return;
     }
+    if (!settings->isSettingsOK())
+        return;
     settings_t config = settings->getSettings();
 
     wifi = new WiFiConnection(settings, tft);
@@ -190,10 +195,8 @@ void setup(void) {
     dataLogger->logData();
 
     mqtt = new MQTT(wifi, sensors, settings, tft, dataLogger, storage, messageReceived);
-    if (!mqtt->begin()) {
+    if (!mqtt->begin())
         Serial.println("MQTT is not connected");
-        return;
-    }
 
     drawScreen();
     printDateTime();
@@ -204,34 +207,34 @@ void setup(void) {
     tmrRefreshTime->start();
     tmrShowPres->start();
 
-    Serial.println("end setup - " + String(ESP.getFreeHeap()));
+    Serial.println("end setup - free mem: " + String((float) ESP.getFreeHeap() / 1024) + " kb");
 }
 
 void loop() {
-    if (mqtt->isConnected()) {
-        if (tmrRefreshTime->isTime()) {
-            printDateTime();
-        }
+    if (!settings->isSettingsOK())
+        return;
 
-        if (tmrShowPres->isTime()) {
-            switchHumiPres();
-            drawPresHumi();
-            printValues();
-        }
+    if (tmrRefreshTime->isTime())
+        printDateTime();
 
-        sensors->loop();
-        if (sensors->updated()) {
-            printValues();
-        }
-
-        tempRep->refresh();
-        presHumiRep->refresh();
-        timeRep->refresh();
-        ddmmRep->refresh();
-        yearRep->refresh();
-
-        dataLogger->loop();
-        httpHandlers->loop();
+    if (tmrShowPres->isTime()) {
+        switchHumiPres();
+        drawPresHumi();
+        printValues();
     }
+
+    sensors->loop();
+    if (sensors->updated()) {
+        printValues();
+    }
+
+    tempRep->refresh();
+    presHumiRep->refresh();
+    timeRep->refresh();
+    ddmmRep->refresh();
+    yearRep->refresh();
+
+    dataLogger->loop();
+    httpHandlers->loop();
     mqtt->loop();
 }

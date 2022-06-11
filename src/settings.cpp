@@ -14,14 +14,23 @@ bool Settings::begin() {
     m_tft->setCursor(2, m_tft->getCursorY() + 20);
     m_tft->print("Read settings");
 
-    m_settingsOK = readSettings();
-    if (!m_settingsOK)
-        return false;
-    
     m_tft->setCursor(2, m_tft->getCursorY() + 20);
-    m_tft->print("Settings OK");
-    delay(1000);
+    if (!readSettings()) {
+        // Create new empty settings file
+        defaultSettings();
+        if (!saveSettings()) {
+            m_tft->print("Settings err");
+            delay(1000);
+            return false;
+        }
 
+        m_tft->print("Must config");
+    } else {
+        m_tft->print("Settings OK");
+    }
+    m_settingsOK = true;
+    
+    delay(1000);
     return true;
 }
 
@@ -60,14 +69,16 @@ bool Settings::ssidExists(String ssid) {
 
 //////////////////// Private methods implementation
 bool Settings::readSettings() {
+    if (!m_storage->exists(SETTINGS_FILE)) {
+        return false;
+    }
+
     StaticJsonDocument<1024> configs;
     char *settingsJson = m_storage->readAll(SETTINGS_FILE);
     DeserializationError error = deserializeJson(configs, settingsJson);
     if (error) {
         Serial.print(F("deserializeJson() failed: "));
         Serial.println(error.f_str());
-        m_tft->setCursor(2, m_tft->getCursorY() + 20);
-        m_tft->print("Bad JSON");
         return false;
     }
     JsonObject jsonObj = configs.as<JsonObject>();
@@ -96,7 +107,6 @@ bool Settings::readSettings() {
     m_settings.dateTime.gmtOffset = jsonObj["date_time"]["gmt_offset"].as<long>();
     m_settings.dateTime.daylightOffset = jsonObj["date_time"]["daylight_offset"].as<int>();
 
-    // TODO: Validate parameters
     return true;
 }
 
@@ -131,4 +141,22 @@ String Settings::createJson() {
     serializeJsonPretty(doc, json);
 
     return json;
+}
+
+void Settings::defaultSettings() {
+    m_settings.mqtt.server = "";
+    m_settings.mqtt.port = 0;
+    m_settings.mqtt.username = "";
+    m_settings.mqtt.password = "";
+    m_settings.mqtt.caCertPath = "/settings/mqtt_ca_root.crt";
+    m_settings.mqtt.sendPeriod = 3600;
+
+    m_settings.wifiAPs.clear();
+
+    m_settings.storage.outputPath = "/logs/meteo_data.txt";
+    m_settings.storage.writePeriod = 1800;
+
+    m_settings.dateTime.server = "pool.ntp.org";
+    m_settings.dateTime.gmtOffset = -3;
+    m_settings.dateTime.daylightOffset = 0;
 }
