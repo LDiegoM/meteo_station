@@ -49,6 +49,8 @@ class Settings {
         settings_t getSettings();
         bool saveSettings();
         void addWifiAP(const char* ssid, const char* password);
+        bool updWifiAP(const char* ssid, const char* password);
+        bool delWifiAP(const char* ssid);
         bool ssidExists(String ssid);
 };
 
