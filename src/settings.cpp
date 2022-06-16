@@ -59,6 +59,29 @@ void Settings::addWifiAP(const char* ssid, const char* password) {
     m_settings.wifiAPs.push_back(ap);
 }
 
+bool Settings::updWifiAP(const char* ssid, const char* password) {
+    for (int i = 0; i < m_settings.wifiAPs.size(); i++) {
+        if (m_settings.wifiAPs[i].ssid.equalsIgnoreCase(ssid)) {
+            m_settings.wifiAPs[i].password = password;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Settings::delWifiAP(const char* ssid){
+    uint8_t i = 0;
+    while (i < m_settings.wifiAPs.size() && !m_settings.wifiAPs[i].ssid.equals(ssid)) {
+        i++;
+    }
+    if (i >= m_settings.wifiAPs.size())
+        return false;
+    
+    m_settings.wifiAPs.erase(m_settings.wifiAPs.begin() + i);
+    return true;
+}
+
 bool Settings::ssidExists(String ssid) {
     for (int i = 0; i < m_settings.wifiAPs.size(); i++) {
         if (m_settings.wifiAPs[i].ssid.equalsIgnoreCase(ssid))

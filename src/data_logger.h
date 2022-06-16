@@ -30,4 +30,6 @@ class DataLogger {
         String logSize();
 };
 
+extern DataLogger *dataLogger;
+
 #endif

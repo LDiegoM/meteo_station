@@ -124,6 +124,61 @@ Status resopnse table:
 
 Notice that the settings include MQTT and Wifi APs passwords as plain text. In future version it'll be encrypted.
 
+- GET `/settings/wifi`: Returns HTML page that allows a CRUD access to wifi configuration.
+
+- POST `/settings/wifi`: Adds a new wifi AP to list. It's accessed by wifi settings HTML.
+
+Payload:
+```json
+{
+    "ap": "ap ssid",
+    "pw": "ap password"
+}
+```
+
+| HTTP status code | Meaning |
+|---               |---      |
+|       500        | There was an internal error adding ap into settings. |
+|       400        | Invalid payload or AP ssid is empty, or AP ssid currently exists in APs list. |
+|       200        | AP was successfully added into settings. |
+
+- PUT `/settings/wifi`: Updates one or more wifi AP into list. It's accessed by wifi settings HTML.
+
+```json
+{
+    "aps": [
+        {
+            "ap": "ap ssid",
+            "pw": "ap password"
+        }
+    ]
+}
+```
+
+| HTTP status code | Meaning |
+|---               |---      |
+|       500        | There was an internal error updating ap into settings. |
+|       400        | Invalid payload or AP ssid is empty. |
+|       404        | AP ssid wasn't found in current APs list. |
+|       200        | APs were successfully updated into settings. |
+
+- DELETE `/settings/wifi`: Deletes an existing wifi AP from list. It's accessed by wifi settings HTML.
+
+Payload:
+```json
+{
+    "ap": "ap ssid",
+    "pw": "ap password"
+}
+```
+
+| HTTP status code | Meaning |
+|---               |---      |
+|       500        | There was an internal error deleting ap from settings. |
+|       400        | Invalid payload or AP ssid is empty. |
+|       404        | AP ssid wasn't found in current APs list. |
+|       200        | AP was successfully removed from settings. |
+
 # Author
 
 - Main idea, development and functional prototype by Diego M. Lopez (ldiegom@gmail.com)
@@ -136,6 +191,8 @@ Notice that the settings include MQTT and Wifi APs passwords as plain text. In f
 - Add get free storage functionality and send to MQTT.
 - Add capability to have empty settings.
 - If no wifi available, starts AP to allow configuration.
+- Add html and api handlers for WiFi settings.
+- Allows to display measures in screen even if wifi is not connected.
 
 ## 0.0.8 - 2022-05-10
 

@@ -1,0 +1,16 @@
+<div class="container mt-4">
+    <p>Current WiFi APs (update if necessary)</p>
+<!--{wifi_update_ap.html}-->
+</div>
+<div class="container mt-4">
+    <p>New WiFi AP (complete to add new)</p>
+    <div class="row">
+        <div class="col">
+            <input type="text" class="form-control" id="ap" placeholder="AP ssid" name="ap">
+        </div>
+        <div class="col">
+            <input type="password" class="form-control" id="pw" placeholder="Password" name="pw">
+        </div>
+    </div>
+</div>
+<button type="submit" class="btn btn-primary mt-2" onclick="saveWiFi();">Save</button>

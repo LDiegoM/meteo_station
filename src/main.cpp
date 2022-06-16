@@ -46,9 +46,6 @@ Storage *storage;
 Settings *settings;
 WiFiConnection *wifi;
 DateTime *dateTime;
-MQTT *mqtt;
-DataLogger *dataLogger;
-HttpHandlers *httpHandlers;
 
 // Starts showing humidity
 bool flgShowPres = false;
@@ -58,10 +55,6 @@ void drawPresHumi();
 void printDateTime();
 void printValues();
 void switchHumiPres();
-void messageReceived(char* topic, uint8_t* payload, unsigned int length);
-void downloadLogs();
-void deleteLogs();
-void getSettings();
 
 void printDateTime() {
     if (!wifi->isConnected())
@@ -117,24 +110,6 @@ void drawScreen() {
     printDateTime();
 }
 
-void messageReceived(char* topic, uint8_t* payload, unsigned int length) {
-    mqtt->processReceivedMessage(topic, payload, length);
-}
-
-/////////// HTTP Handlers
-void downloadLogs() {
-    httpHandlers->handleDownloadLogs();
-}
-
-void deleteLogs() {
-    if (httpHandlers->handleDeleteLogs())
-        dataLogger->logData();
-}
-
-void getSettings() {
-    httpHandlers->handleGetSettings();
-}
-
 void setup(void) {
     Serial.begin(115200);
     Serial.println("begin setup - free mem: " + String((float) ESP.getFreeHeap() / 1024) + " kb");
@@ -172,8 +147,7 @@ void setup(void) {
     wifi = new WiFiConnection(settings, tft);
     wifi->begin();
 
-    httpHandlers = new HttpHandlers(wifi, storage, settings, tft,
-                                    downloadLogs, deleteLogs, getSettings);
+    httpHandlers = new HttpHandlers(wifi, storage, settings, tft);
     if (!httpHandlers->begin()) {
         Serial.println("Could not start http server");
         return;

@@ -1,5 +1,12 @@
 #include <mqtt.h>
 
+MQTT *mqtt = nullptr;
+
+//////////////////// MQTT Handlers
+void messageReceived(char* topic, uint8_t* payload, unsigned int length) {
+    mqtt->processReceivedMessage(topic, payload, length);
+}
+
 //////////////////// Constructor
 MQTT::MQTT(WiFiConnection *wifi, Sensors *sensors, Settings *settings, TFT_ILI9163C *tft,
            DataLogger *dataLogger, Storage *storage, MQTT_CALLBACK_SIGNATURE) {
@@ -28,10 +35,10 @@ bool MQTT::begin() {
     m_tmrSendValuesToMQTT = new Timer(m_settings->getSettings().mqtt.sendPeriod * 1000);
     m_tmrSendValuesToMQTT->start();
 
-    return connect();
+    return connect(true);
 }
 
-bool MQTT::connect() {
+bool MQTT::connect(bool verbose) {
     m_connected = false;
     if (!m_settings->isSettingsOK() || m_wifi->isModeAP())
         return false;
@@ -46,27 +53,36 @@ bool MQTT::connect() {
         if (!m_wifi->connect())
             return false;
     }
-        
-    m_tft->fillScreen(BLACK);
-    m_tft->setTextColor(WHITE);
-    m_tft->setCursor(2, 20);
 
-    m_tft->print("MQTT Connect");
-    m_tft->setCursor(2, m_tft->getCursorY() + 20);
+    if (verbose) {
+        m_tft->fillScreen(BLACK);
+        m_tft->setTextColor(WHITE);
+        m_tft->setCursor(2, 20);
+
+        m_tft->print("MQTT Connect");
+        m_tft->setCursor(2, m_tft->getCursorY() + 20);
+    }
 
     String clientID = "ESP32-device_" + WiFi.localIP().toString();
     m_mqttClient->setServer(m_settings->getSettings().mqtt.server.c_str(), m_settings->getSettings().mqtt.port);
     if (!m_mqttClient->connect(clientID.c_str(),
                                m_settings->getSettings().mqtt.username.c_str(),
                                m_settings->getSettings().mqtt.password.c_str())) {
-        m_tft->print("FAIL");
+        if (verbose) {
+            m_tft->print("FAIL");
+            delay(1000);
+        }
+
         return false;
     }
     m_mqttClient->subscribe(MQTT_TOPIC_CMD);
-    m_tft->print("OK");
     m_tmrConnectMQTT->stop();
     m_connected = true;
-    delay(1000);
+
+    if (verbose) {
+        m_tft->print("OK");
+        delay(1000);
+    }
 
     sendValuesToMQTT();
 
@@ -88,7 +104,7 @@ void MQTT::loop() {
 
         if (m_tmrConnectMQTT->isTime()) {
             Serial.println("MQTT not connected. Reconnecting");
-            if (!connect()) {
+            if (!connect(false)) {
                 return;
             }
         }

@@ -18,6 +18,9 @@
 #include <data_logger.h>
 #include <storage.h>
 
+//////////////////// MQTT Handlers
+void messageReceived(char* topic, uint8_t* payload, unsigned int length);
+
 class MQTT {
     private:
         WiFiConnection *m_wifi;
@@ -65,10 +68,12 @@ class MQTT {
              DataLogger *dataLogger, Storage *storage, MQTT_CALLBACK_SIGNATURE);
         
         bool begin();
-        bool connect();
+        bool connect(bool verbose);
         bool isConnected();
         void loop();
         void processReceivedMessage(char* topic, uint8_t* payload, unsigned int length);
 };
+
+extern MQTT *mqtt;
 
 #endif

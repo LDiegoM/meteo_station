@@ -1,5 +1,7 @@
 #include <data_logger.h>
 
+DataLogger *dataLogger = nullptr;
+
 //////////////////// Constructor
 DataLogger::DataLogger(Sensors *sensors, DateTime *dateTime, Storage *storage, String filePath, uint16_t logPeriod_sec) {
     m_sensors = sensors;
