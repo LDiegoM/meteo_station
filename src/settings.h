@@ -48,10 +48,15 @@ class Settings {
         bool isSettingsOK();
         settings_t getSettings();
         bool saveSettings();
+
         void addWifiAP(const char* ssid, const char* password);
         bool updWifiAP(const char* ssid, const char* password);
         bool delWifiAP(const char* ssid);
         bool ssidExists(String ssid);
+
+        void setMQTTValues(String server, String username, String password, uint16_t port, uint16_t sendPeriod);
+        void setMQTTValues(String server, String username, uint16_t port, uint16_t sendPeriod);
+        bool setMQTTCertificate(String certData);
 };
 
 #endif

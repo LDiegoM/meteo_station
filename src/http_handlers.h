@@ -15,6 +15,12 @@
 #include <storage.h>
 #include <data_logger.h>
 
+struct settings_mqtt_t {
+    String server, username, password;
+    uint16_t port, sendPeriod;
+    String certData;
+};
+
 /////////// HTTP Handlers
 void downloadLogs();
 void deleteLogs();
@@ -29,6 +35,10 @@ void addSettingsWiFi();
 void updSettingsWiFi();
 void delSettingsWiFi();
 
+void getSettingsMQTT();
+void updSettingsMQTT();
+void getSettingsMQTTCert();
+
 class HttpHandlers {
     private:
         const uint16_t METEO_HTTP_PORT = 80;
@@ -38,6 +48,8 @@ class HttpHandlers {
         const char* ERR_WIFI_AP_NOT_FOUND = "AP ssid not found";
         const char* ERR_WIFI_AP_IS_EMPTY = "AP ssid can't be empty";
         const char* ERR_WIFI_AP_EXISTS = "There's already an AP with the same SSID";
+
+        const char* ERR_MQTT_IS_EMPTY = "MQTT parameters can't be empty";
 
         WiFiConnection *m_wifi;
         Storage *m_storage;
@@ -51,9 +63,12 @@ class HttpHandlers {
         String getFooterHTML(String page, String section);
         
         String getSettingsWiFiHTML();
+        String getSettingsMQTTHTML();
 
         wifiAP_t parseWiFiBody(String body);
         std::vector<wifiAP_t> parseMultiWiFiBody(String body);
+
+        settings_mqtt_t parseMQTTBody(String body);
 
     public:
         HttpHandlers(WiFiConnection *wifi, Storage *storage, Settings *settings, TFT_ILI9163C *tft);
@@ -74,6 +89,10 @@ class HttpHandlers {
         void handleAddSettingsWiFi();
         void handleUpdSettingsWiFi();
         void handleDelSettingsWiFi();
+
+        void handleGetSettingsMQTT();
+        void handleUpdSettingsMQTT();
+        void handleGetSettingsMQTTCert();
 };
 
 extern HttpHandlers *httpHandlers;
