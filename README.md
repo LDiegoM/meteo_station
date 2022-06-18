@@ -179,6 +179,33 @@ Payload:
 |       404        | AP ssid wasn't found in current APs list. |
 |       200        | AP was successfully removed from settings. |
 
+- GET `/settings/mqtt`: Returns HTML page that allows to configure MQTT client.
+
+- PUT `/settings/mqtt`: Update MQTT client configurations.
+
+Payload:
+```json
+{
+    "server": "server-address",
+    "user": "your-mqtt-broker-username",
+    "pw": "your-mqtt-broker-password",
+    "port": 0,
+    "send_period": 0,
+    "cert": [
+        "cert-line-1",
+        "cert-line-2"
+    ]
+}
+```
+
+| HTTP status code | Meaning |
+|---               |---      |
+|       500        | There was an internal error updating settings. |
+|       400        | Invalid payload or invalid parameter. |
+|       200        | MQTT client configurations successfully updated. |
+
+- GET `/settings/mqtt/cert`: Returns the MQTT client SSL certificate content.
+
 # Author
 
 - Main idea, development and functional prototype by Diego M. Lopez (ldiegom@gmail.com)
