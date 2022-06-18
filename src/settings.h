@@ -57,6 +57,8 @@ class Settings {
         void setMQTTValues(String server, String username, String password, uint16_t port, uint16_t sendPeriod);
         void setMQTTValues(String server, String username, uint16_t port, uint16_t sendPeriod);
         bool setMQTTCertificate(String certData);
+
+        void setLoggerValues(uint16_t writePeriod);
 };
 
 #endif

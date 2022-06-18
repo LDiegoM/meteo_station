@@ -206,6 +206,23 @@ Payload:
 
 - GET `/settings/mqtt/cert`: Returns the MQTT client SSL certificate content.
 
+- GET `/settings/logger`: Returns HTML page that allows to configuration Data Logger.
+
+- PUT `/settings/logger`: Update Data Logger configurations.
+
+Payload:
+```json
+{
+    "write_period": 0,
+}
+```
+
+| HTTP status code | Meaning |
+|---               |---      |
+|       500        | There was an internal error updating settings. |
+|       400        | Invalid payload or invalid parameter. |
+|       200        | Data Logger configurations successfully updated. |
+
 # Author
 
 - Main idea, development and functional prototype by Diego M. Lopez (ldiegom@gmail.com)
@@ -221,6 +238,7 @@ Payload:
 - Add html and api handlers for WiFi settings.
 - Allows to display measures in screen even if wifi is not connected.
 - Add html and api handlers for MQTT settings.
+- Add html and api handlers for Data Logger settings.
 
 ## 0.0.8 - 2022-05-10
 
