@@ -90,6 +90,37 @@ bool Settings::ssidExists(String ssid) {
     return false;
 }
 
+void Settings::setMQTTValues(String server, String username, String password, uint16_t port, uint16_t sendPeriod) {
+    m_settings.mqtt.server = server;
+    m_settings.mqtt.username = username;
+    m_settings.mqtt.password = password;
+    m_settings.mqtt.port = port;
+    m_settings.mqtt.sendPeriod = sendPeriod;
+}
+void Settings::setMQTTValues(String server, String username, uint16_t port, uint16_t sendPeriod) {
+    m_settings.mqtt.server = server;
+    m_settings.mqtt.username = username;
+    m_settings.mqtt.port = port;
+    m_settings.mqtt.sendPeriod = sendPeriod;
+}
+bool Settings::setMQTTCertificate(String certData) {
+    if (m_settings.mqtt.caCertPath.equals(""))
+        return false;
+
+    free(m_settings.mqtt.ca_cert);
+    unsigned int strLen = certData.length() + 1;
+    char charData[strLen];
+    certData.toCharArray(charData, strLen);
+    charData[strLen] = '\0';
+
+    m_storage->remove(m_settings.mqtt.caCertPath.c_str());
+    bool ok = m_storage->writeFile(m_settings.mqtt.caCertPath.c_str(), charData);
+    if (ok) {
+        m_settings.mqtt.ca_cert = m_storage->readAll(m_settings.mqtt.caCertPath.c_str());
+    }
+    return ok;
+}
+
 //////////////////// Private methods implementation
 bool Settings::readSettings() {
     if (!m_storage->exists(SETTINGS_FILE)) {

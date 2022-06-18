@@ -31,16 +31,25 @@ void getNotFound() {
 void getSettingsWiFi() {
     httpHandlers->handleGetSettingsWiFi();
 }
-void addSettingsWiFi(){
+void addSettingsWiFi() {
     httpHandlers->handleAddSettingsWiFi();
 }
-void updSettingsWiFi(){
+void updSettingsWiFi() {
     httpHandlers->handleUpdSettingsWiFi();
 }
-void delSettingsWiFi(){
+void delSettingsWiFi() {
     httpHandlers->handleDelSettingsWiFi();
 }
 
+void getSettingsMQTT() {
+    httpHandlers->handleGetSettingsMQTT();
+}
+void updSettingsMQTT() {
+    httpHandlers->handleUpdSettingsMQTT();
+}
+void getSettingsMQTTCert() {
+    httpHandlers->handleGetSettingsMQTTCert();
+}
 
 //////////////////// Constructor
 HttpHandlers::HttpHandlers(WiFiConnection *wifi, Storage *storage, Settings *settings, TFT_ILI9163C *tft) {
@@ -240,6 +249,48 @@ void HttpHandlers::handleDelSettingsWiFi() {
     m_server->send(200, "text/plain", MSG_OK);
 }
 
+void HttpHandlers::handleGetSettingsMQTT() {
+    String html = getSettingsHeaderHTML("mqtt");
+    html += getSettingsMQTTHTML();
+    html += getFooterHTML("settings", "mqtt");
+    m_server->send(200, "text/html", html);
+}
+void HttpHandlers::handleUpdSettingsMQTT() {
+    String body = m_server->arg("plain");
+    if (body.equals("")) {
+        m_server->send(400, "text/plain", ERR_MQTT_IS_EMPTY);
+        return;
+    }
+
+    settings_mqtt_t mqttValues = parseMQTTBody(body);
+    if (mqttValues.server.equals("")) {
+        m_server->send(400, "text/plain", ERR_MQTT_IS_EMPTY);
+        return;
+    }
+
+    if (mqttValues.password.equals("****"))
+        m_settings->setMQTTValues(mqttValues.server, mqttValues.username, mqttValues.port, mqttValues.sendPeriod);
+    else
+        m_settings->setMQTTValues(mqttValues.server, mqttValues.username, mqttValues.password, mqttValues.port, mqttValues.sendPeriod);
+
+    if (!mqttValues.certData.equals("")) {
+        if (!m_settings->setMQTTCertificate(mqttValues.certData)) {
+            m_server->send(500, "text/plain", ERR_GENERIC);
+            return;        
+        }
+    }
+
+    if (!m_settings->saveSettings()) {
+        m_server->send(500, "text/plain", ERR_GENERIC);
+        return;        
+    }
+
+    m_server->send(200, "text/plain", MSG_OK);
+}
+void HttpHandlers::handleGetSettingsMQTTCert() {
+    m_server->send(200, "text/html", m_settings->getSettings().mqtt.ca_cert);
+}
+
 //////////////////// Private methods implementation
 void HttpHandlers::defineRoutes() {
     m_server->on("/logs", HTTP_GET, downloadLogs);
@@ -256,12 +307,15 @@ void HttpHandlers::defineRoutes() {
     m_server->on("/settings/wifi", HTTP_PUT, updSettingsWiFi);
     m_server->on("/settings/wifi", HTTP_DELETE, delSettingsWiFi);
 
+    m_server->on("/settings/mqtt", HTTP_GET, getSettingsMQTT);
+    m_server->on("/settings/mqtt", HTTP_PUT, updSettingsMQTT);
+    m_server->on("/settings/mqtt/cert", HTTP_GET, getSettingsMQTTCert);
+
     m_server->onNotFound(getNotFound);
 }
 
 String HttpHandlers::getSettingsHeaderHTML(String section) {
     String header = m_storage->readAll("/wwwroot/settings/header.html");
-    Serial.println(header);
 
     header.replace("{active_wifi}", (section.equals("wifi") ? "active" : ""));
     header.replace("{active_mqtt}", (section.equals("mqtt") ? "active" : ""));
@@ -297,6 +351,19 @@ String HttpHandlers::getSettingsWiFiHTML() {
 
     String html = m_storage->readAll("/wwwroot/settings/wifi.html");
     html.replace("<!--{wifi_update_ap.html}-->", htmlUpdate);
+    return html;
+}
+
+String HttpHandlers::getSettingsMQTTHTML() {
+    String html = m_storage->readAll("/wwwroot/settings/mqtt.html");
+
+    settings_t settings = m_settings->getSettings();
+    html.replace("{server}", settings.mqtt.server);
+    html.replace("{user}", settings.mqtt.username);
+    html.replace("{port}", String(settings.mqtt.port));
+    html.replace("{sendPeriod}", String(settings.mqtt.sendPeriod));
+    html.replace("{certificate}", "");
+
     return html;
 }
 
@@ -339,4 +406,31 @@ std::vector<wifiAP_t> HttpHandlers::parseMultiWiFiBody(String body) {
     }
 
     return aps;
+}
+
+settings_mqtt_t HttpHandlers::parseMQTTBody(String body) {
+    settings_mqtt_t mqttValues;
+
+    StaticJsonDocument<4096> configs;
+    DeserializationError error = deserializeJson(configs, body);
+    if (error) {
+        Serial.print(F("deserializeJson() failed: "));
+        Serial.println(error.f_str());
+        return mqttValues;
+    }
+    JsonObject jsonObj = configs.as<JsonObject>();
+
+    mqttValues.server = jsonObj["server"].as<String>();
+    mqttValues.username = jsonObj["user"].as<String>();
+    mqttValues.password = jsonObj["pw"].as<String>();
+    mqttValues.port = jsonObj["port"].as<uint16_t>();
+    mqttValues.sendPeriod = jsonObj["send_period"].as<uint16_t>();
+
+    String cert = "";
+    for (int i = 0; i < jsonObj["cert"].size(); i++) {
+        cert += jsonObj["cert"][i].as<String>() + "\n";
+    }
+    mqttValues.certData = cert;
+
+    return mqttValues;
 }

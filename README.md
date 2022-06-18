@@ -193,6 +193,7 @@ Payload:
 - If no wifi available, starts AP to allow configuration.
 - Add html and api handlers for WiFi settings.
 - Allows to display measures in screen even if wifi is not connected.
+- Add html and api handlers for MQTT settings.
 
 ## 0.0.8 - 2022-05-10
 
