@@ -121,6 +121,10 @@ bool Settings::setMQTTCertificate(String certData) {
     return ok;
 }
 
+void Settings::setLoggerValues(uint16_t writePeriod) {
+    m_settings.storage.writePeriod = writePeriod;
+}
+
 //////////////////// Private methods implementation
 bool Settings::readSettings() {
     if (!m_storage->exists(SETTINGS_FILE)) {

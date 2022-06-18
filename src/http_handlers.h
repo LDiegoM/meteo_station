@@ -39,6 +39,9 @@ void getSettingsMQTT();
 void updSettingsMQTT();
 void getSettingsMQTTCert();
 
+void getSettingsLogger();
+void updSettingsLogger();
+
 class HttpHandlers {
     private:
         const uint16_t METEO_HTTP_PORT = 80;
@@ -50,6 +53,8 @@ class HttpHandlers {
         const char* ERR_WIFI_AP_EXISTS = "There's already an AP with the same SSID";
 
         const char* ERR_MQTT_IS_EMPTY = "MQTT parameters can't be empty";
+        
+        const char* ERR_LOGGER_IS_EMPTY = "Data Logger parameters can't be empty";
 
         WiFiConnection *m_wifi;
         Storage *m_storage;
@@ -64,11 +69,14 @@ class HttpHandlers {
         
         String getSettingsWiFiHTML();
         String getSettingsMQTTHTML();
+        String getSettingsLoggerHTML();
 
         wifiAP_t parseWiFiBody(String body);
         std::vector<wifiAP_t> parseMultiWiFiBody(String body);
 
         settings_mqtt_t parseMQTTBody(String body);
+
+        uint16_t parseLoggerBody(String body);
 
     public:
         HttpHandlers(WiFiConnection *wifi, Storage *storage, Settings *settings, TFT_ILI9163C *tft);
@@ -93,6 +101,9 @@ class HttpHandlers {
         void handleGetSettingsMQTT();
         void handleUpdSettingsMQTT();
         void handleGetSettingsMQTTCert();
+
+        void handleGetSettingsLogger();
+        void handleUpdSettingsLogger();
 };
 
 extern HttpHandlers *httpHandlers;
