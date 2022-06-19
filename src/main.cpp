@@ -165,7 +165,7 @@ void setup(void) {
                config.dateTime.server.c_str());
     dateTime = new DateTime();
 
-    dataLogger = new DataLogger(sensors, dateTime, storage, config.storage.outputPath, config.storage.writePeriod);
+    dataLogger = new DataLogger(sensors, dateTime, storage, config.logger.outputPath, config.logger.writePeriod);
     dataLogger->logData();
 
     mqtt = new MQTT(wifi, sensors, settings, tft, dataLogger, storage, messageReceived);

@@ -94,14 +94,14 @@ void HttpHandlers::loop() {
 /////////// HTTP Handlers
 void HttpHandlers::handleDownloadLogs() {
     Serial.println("Starting logs download");
-    if (!m_storage->exists(m_settings->getSettings().storage.outputPath.c_str())) {
+    if (!m_storage->exists(m_settings->getSettings().logger.outputPath.c_str())) {
         m_server->send(404, "text/plain", "not found");
         return;
     }
 
     Serial.println("File exists");
 
-    File file = m_storage->open(m_settings->getSettings().storage.outputPath.c_str());
+    File file = m_storage->open(m_settings->getSettings().logger.outputPath.c_str());
     if (!file) {
         m_server->send(500, "text/plain", "fail to open log file");
         return;
@@ -123,13 +123,13 @@ void HttpHandlers::handleDownloadLogs() {
 
 bool HttpHandlers::handleDeleteLogs() {
     Serial.println("Starting logs delete");
-    if (!m_storage->exists(m_settings->getSettings().storage.outputPath.c_str())) {
+    if (!m_storage->exists(m_settings->getSettings().logger.outputPath.c_str())) {
         m_server->send(404, "text/plain", "not found");
         return false;
     }
 
     Serial.println("File exists");
-    bool flgOK = m_storage->remove(m_settings->getSettings().storage.outputPath.c_str());
+    bool flgOK = m_storage->remove(m_settings->getSettings().logger.outputPath.c_str());
     if (flgOK)
         m_server->send(204);
     else
@@ -461,7 +461,7 @@ String HttpHandlers::getSettingsMQTTHTML() {
 String HttpHandlers::getSettingsLoggerHTML() {
     String html = m_storage->readAll("/wwwroot/settings/logger.html");
 
-    html.replace("{writePeriod}", String(m_settings->getSettings().storage.writePeriod));
+    html.replace("{writePeriod}", String(m_settings->getSettings().logger.writePeriod));
 
     return html;
 }
