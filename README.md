@@ -213,7 +213,7 @@ Payload:
 Payload:
 ```json
 {
-    "write_period": 0,
+    "write_period": 0
 }
 ```
 
@@ -222,6 +222,25 @@ Payload:
 |       500        | There was an internal error updating settings. |
 |       400        | Invalid payload or invalid parameter. |
 |       200        | Data Logger configurations successfully updated. |
+
+- GET `/settings/date`: Returns HTML page that allows to configuration Date Time server.
+
+- PUT `/settings/date`: Update Date Time configurations.
+
+Payload:
+```json
+{
+    "server": "server-address",
+    "gmt_offset": 0,
+    "daylight_offset": 0
+}
+```
+
+| HTTP status code | Meaning |
+|---               |---      |
+|       500        | There was an internal error updating settings. |
+|       400        | Invalid payload or invalid parameter. |
+|       200        | Date Time configurations successfully updated. |
 
 # Author
 
@@ -239,6 +258,7 @@ Payload:
 - Allows to display measures in screen even if wifi is not connected.
 - Add html and api handlers for MQTT settings.
 - Add html and api handlers for Data Logger settings.
+- Add html and api handlers for Date Time settings.
 
 ## 0.0.8 - 2022-05-10
 
