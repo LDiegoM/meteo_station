@@ -17,10 +17,10 @@ struct settings_t {
         char* ca_cert;
     } mqtt;
     std::vector<wifiAP_t> wifiAPs;
-    struct storage {
+    struct logger {
         String outputPath;
         uint16_t writePeriod;
-    } storage;
+    } logger;
     struct dateTime {
         String server;
         long gmtOffset;

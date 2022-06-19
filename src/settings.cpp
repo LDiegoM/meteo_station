@@ -122,7 +122,7 @@ bool Settings::setMQTTCertificate(String certData) {
 }
 
 void Settings::setLoggerValues(uint16_t writePeriod) {
-    m_settings.storage.writePeriod = writePeriod;
+    m_settings.logger.writePeriod = writePeriod;
 }
 
 void Settings::setDateValues(String server, long gmtOffset, int daylightOffset) {
@@ -164,8 +164,8 @@ bool Settings::readSettings() {
         m_settings.wifiAPs.push_back(wifi);
     }
 
-    m_settings.storage.outputPath = jsonObj["storage"]["output_path"].as<String>();
-    m_settings.storage.writePeriod = jsonObj["storage"]["write_period_seconds"].as<uint16_t>();
+    m_settings.logger.outputPath = jsonObj["data_logger"]["output_path"].as<String>();
+    m_settings.logger.writePeriod = jsonObj["data_logger"]["write_period_seconds"].as<uint16_t>();
 
     m_settings.dateTime.server = jsonObj["date_time"]["server"].as<String>();
     m_settings.dateTime.gmtOffset = jsonObj["date_time"]["gmt_offset"].as<long>();
@@ -192,9 +192,9 @@ String Settings::createJson() {
         wifiAP["password"] = m_settings.wifiAPs[i].password;
     }
 
-    JsonObject storageObj = doc.createNestedObject("storage");
-    storageObj["output_path"] = m_settings.storage.outputPath;
-    storageObj["write_period_seconds"] = m_settings.storage.writePeriod;
+    JsonObject loggerObj = doc.createNestedObject("data_logger");
+    loggerObj["output_path"] = m_settings.logger.outputPath;
+    loggerObj["write_period_seconds"] = m_settings.logger.writePeriod;
 
     JsonObject dateTimeObj = doc.createNestedObject("date_time");
     dateTimeObj["server"] = m_settings.dateTime.server;
@@ -217,8 +217,8 @@ void Settings::defaultSettings() {
 
     m_settings.wifiAPs.clear();
 
-    m_settings.storage.outputPath = "/logs/meteo_data.txt";
-    m_settings.storage.writePeriod = 1800;
+    m_settings.logger.outputPath = "/logs/meteo_data.txt";
+    m_settings.logger.writePeriod = 1800;
 
     m_settings.dateTime.server = "pool.ntp.org";
     m_settings.dateTime.gmtOffset = -3;

@@ -49,7 +49,7 @@ Path: `/settings/meteo_settings.json`
             "password": "wifi_ap2_password"
         }
     ],
-    "storage":{
+    "data_logger":{
         "output_path": "/logs/meteo_data.txt",
         "write_period_seconds": 1800
     },
@@ -260,6 +260,7 @@ Payload:
 - Add html and api handlers for Data Logger settings.
 - Add html and api handlers for Date Time settings.
 - Refactor html site to include status and administrative pages.
+- Refactor Data Logger settings.
 
 ## 0.0.8 - 2022-05-10
 
