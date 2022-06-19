@@ -59,6 +59,8 @@ class Settings {
         bool setMQTTCertificate(String certData);
 
         void setLoggerValues(uint16_t writePeriod);
+
+        void setDateValues(String server, long gmtOffset, int daylightOffset);
 };
 
 #endif

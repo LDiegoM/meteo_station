@@ -125,6 +125,12 @@ void Settings::setLoggerValues(uint16_t writePeriod) {
     m_settings.storage.writePeriod = writePeriod;
 }
 
+void Settings::setDateValues(String server, long gmtOffset, int daylightOffset) {
+    m_settings.dateTime.server = server;
+    m_settings.dateTime.gmtOffset = gmtOffset;
+    m_settings.dateTime.daylightOffset = daylightOffset;
+}
+
 //////////////////// Private methods implementation
 bool Settings::readSettings() {
     if (!m_storage->exists(SETTINGS_FILE)) {

@@ -58,6 +58,13 @@ void updSettingsLogger() {
     httpHandlers->handleUpdSettingsLogger();
 }
 
+void getSettingsDate() {
+    httpHandlers->handleGetSettingsDate();
+}
+void updSettingsDate() {
+    httpHandlers->handleUpdSettingsDate();
+}
+
 //////////////////// Constructor
 HttpHandlers::HttpHandlers(WiFiConnection *wifi, Storage *storage, Settings *settings, TFT_ILI9163C *tft) {
     m_wifi = wifi;
@@ -327,6 +334,35 @@ void HttpHandlers::handleUpdSettingsLogger() {
     m_server->send(200, "text/plain", MSG_OK);
 }
 
+void HttpHandlers::handleGetSettingsDate() {
+    String html = getSettingsHeaderHTML("date");
+    html += getSettingsDateHTML();
+    html += getFooterHTML("settings", "date");
+    m_server->send(200, "text/html", html);
+}
+void HttpHandlers::handleUpdSettingsDate() {
+    String body = m_server->arg("plain");
+    if (body.equals("")) {
+        m_server->send(400, "text/plain", ERR_DATE_IS_EMPTY);
+        return;
+    }
+
+    settings_date_t dateSettings = parseDateBody(body);
+    if (dateSettings.server.equals("")) {
+        m_server->send(400, "text/plain", ERR_DATE_IS_EMPTY);
+        return;
+    }
+
+    m_settings->setDateValues(dateSettings.server, dateSettings.gmtOffset, dateSettings.daylightOffset);
+
+    if (!m_settings->saveSettings()) {
+        m_server->send(500, "text/plain", ERR_GENERIC);
+        return;        
+    }
+
+    m_server->send(200, "text/plain", MSG_OK);
+}
+
 //////////////////// Private methods implementation
 void HttpHandlers::defineRoutes() {
     m_server->on("/logs", HTTP_GET, downloadLogs);
@@ -349,6 +385,9 @@ void HttpHandlers::defineRoutes() {
 
     m_server->on("/settings/logger", HTTP_GET, getSettingsLogger);
     m_server->on("/settings/logger", HTTP_PUT, updSettingsLogger);
+
+    m_server->on("/settings/date", HTTP_GET, getSettingsDate);
+    m_server->on("/settings/date", HTTP_PUT, updSettingsDate);
 
     m_server->onNotFound(getNotFound);
 }
@@ -410,6 +449,17 @@ String HttpHandlers::getSettingsLoggerHTML() {
     String html = m_storage->readAll("/wwwroot/settings/logger.html");
 
     html.replace("{writePeriod}", String(m_settings->getSettings().storage.writePeriod));
+
+    return html;
+}
+
+String HttpHandlers::getSettingsDateHTML() {
+    String html = m_storage->readAll("/wwwroot/settings/date.html");
+
+    settings_t settings = m_settings->getSettings();
+    html.replace("{server}", String(settings.dateTime.server));
+    html.replace("{gmtOffset}", String(settings.dateTime.gmtOffset));
+    html.replace("{daylightOffset}", String(settings.dateTime.daylightOffset));
 
     return html;
 }
@@ -497,4 +547,23 @@ uint16_t HttpHandlers::parseLoggerBody(String body) {
     writePeriod = jsonObj["write_period"].as<uint16_t>();
 
     return writePeriod;
+}
+
+settings_date_t HttpHandlers::parseDateBody(String body) {
+    settings_date_t dateValues;
+
+    StaticJsonDocument<256> configs;
+    DeserializationError error = deserializeJson(configs, body);
+    if (error) {
+        Serial.print(F("deserializeJson() failed: "));
+        Serial.println(error.f_str());
+        return dateValues;
+    }
+    JsonObject jsonObj = configs.as<JsonObject>();
+
+    dateValues.server = jsonObj["server"].as<String>();
+    dateValues.gmtOffset = jsonObj["gmt_offset"].as<long>();
+    dateValues.daylightOffset = jsonObj["daylight_offset"].as<int>();
+
+    return dateValues;
 }

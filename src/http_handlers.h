@@ -21,6 +21,12 @@ struct settings_mqtt_t {
     String certData;
 };
 
+struct settings_date_t {
+    String server;
+    long gmtOffset;
+    int daylightOffset;
+};
+
 /////////// HTTP Handlers
 void downloadLogs();
 void deleteLogs();
@@ -42,6 +48,9 @@ void getSettingsMQTTCert();
 void getSettingsLogger();
 void updSettingsLogger();
 
+void getSettingsDate();
+void updSettingsDate();
+
 class HttpHandlers {
     private:
         const uint16_t METEO_HTTP_PORT = 80;
@@ -55,6 +64,8 @@ class HttpHandlers {
         const char* ERR_MQTT_IS_EMPTY = "MQTT parameters can't be empty";
         
         const char* ERR_LOGGER_IS_EMPTY = "Data Logger parameters can't be empty";
+
+        const char* ERR_DATE_IS_EMPTY = "Date Time parameters can't be empty";
 
         WiFiConnection *m_wifi;
         Storage *m_storage;
@@ -70,6 +81,7 @@ class HttpHandlers {
         String getSettingsWiFiHTML();
         String getSettingsMQTTHTML();
         String getSettingsLoggerHTML();
+        String getSettingsDateHTML();
 
         wifiAP_t parseWiFiBody(String body);
         std::vector<wifiAP_t> parseMultiWiFiBody(String body);
@@ -77,6 +89,8 @@ class HttpHandlers {
         settings_mqtt_t parseMQTTBody(String body);
 
         uint16_t parseLoggerBody(String body);
+
+        settings_date_t parseDateBody(String body);
 
     public:
         HttpHandlers(WiFiConnection *wifi, Storage *storage, Settings *settings, TFT_ILI9163C *tft);
@@ -104,6 +118,9 @@ class HttpHandlers {
 
         void handleGetSettingsLogger();
         void handleUpdSettingsLogger();
+
+        void handleGetSettingsDate();
+        void handleUpdSettingsDate();
 };
 
 extern HttpHandlers *httpHandlers;
