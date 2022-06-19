@@ -159,7 +159,7 @@ void HttpHandlers::handleGetBootstrapCSS() {
 }
 
 void HttpHandlers::handleGetBootstrapJS() {
-    File file = LittleFS.open("/wwwroot/bootstrap.min.js.gz");
+    File file = LittleFS.open("/wwwroot/bootstrap.bundle.min.js.gz");
     if (!file) {
         m_server->send(404);
         return;
@@ -177,7 +177,7 @@ void HttpHandlers::handleGetNotFound() {
 }
 
 void HttpHandlers::handleGetSettingsWiFi() {
-    String html = getSettingsHeaderHTML("wifi");
+    String html = getHeaderHTML("settings");
     html += getSettingsWiFiHTML();
     html += getFooterHTML("settings", "wifi");
     m_server->send(200, "text/html", html);
@@ -264,7 +264,7 @@ void HttpHandlers::handleDelSettingsWiFi() {
 }
 
 void HttpHandlers::handleGetSettingsMQTT() {
-    String html = getSettingsHeaderHTML("mqtt");
+    String html = getHeaderHTML("settings");
     html += getSettingsMQTTHTML();
     html += getFooterHTML("settings", "mqtt");
     m_server->send(200, "text/html", html);
@@ -306,7 +306,7 @@ void HttpHandlers::handleGetSettingsMQTTCert() {
 }
 
 void HttpHandlers::handleGetSettingsLogger() {
-    String html = getSettingsHeaderHTML("logger");
+    String html = getHeaderHTML("settings");
     html += getSettingsLoggerHTML();
     html += getFooterHTML("settings", "logger");
     m_server->send(200, "text/html", html);
@@ -335,7 +335,7 @@ void HttpHandlers::handleUpdSettingsLogger() {
 }
 
 void HttpHandlers::handleGetSettingsDate() {
-    String html = getSettingsHeaderHTML("date");
+    String html = getHeaderHTML("settings");
     html += getSettingsDateHTML();
     html += getFooterHTML("settings", "date");
     m_server->send(200, "text/html", html);
@@ -372,7 +372,7 @@ void HttpHandlers::defineRoutes() {
     m_server->on("/settings", HTTP_GET, getSettings);
 
     m_server->on("/bootstrap.min.css", HTTP_GET, getBootstrapCSS);
-    m_server->on("/bootstrap.min.js", HTTP_GET, getBootstrapJS);
+    m_server->on("/bootstrap.bundle.min.js", HTTP_GET, getBootstrapJS);
 
     m_server->on("/settings/wifi", HTTP_GET, getSettingsWiFi);
     m_server->on("/settings/wifi", HTTP_POST, addSettingsWiFi);
@@ -392,13 +392,27 @@ void HttpHandlers::defineRoutes() {
     m_server->onNotFound(getNotFound);
 }
 
-String HttpHandlers::getSettingsHeaderHTML(String section) {
-    String header = m_storage->readAll("/wwwroot/settings/header.html");
+String HttpHandlers::getHeaderHTML(String section) {
+    String header = m_storage->readAll("/wwwroot/header.html");
 
-    header.replace("{active_wifi}", (section.equals("wifi") ? "active" : ""));
-    header.replace("{active_mqtt}", (section.equals("mqtt") ? "active" : ""));
-    header.replace("{active_logger}", (section.equals("logger") ? "active" : ""));
-    header.replace("{active_date}", (section.equals("date") ? "active" : ""));
+    String title = "";
+    String description = "";
+    if (section.equals("status")) {
+        title = description;
+        description = STATUS_DESCRIPTION;
+    } else if (section.equals("settings")) {
+        title = "configurations";
+        description = SETTINGS_DESCRIPTION;
+    } else if (section.equals("admin")) {
+        title = "administration";
+        description = ADMIN_DESCRIPTION;
+    }
+    header.replace("{title}", title);
+    header.replace("{description}", description);
+
+    header.replace("{active_status}", (section.equals("status") ? " active" : ""));
+    header.replace("{active_settings}", (section.equals("settings") ? " active" : ""));
+    header.replace("{active_admin}", (section.equals("admin") ? " active" : ""));
 
     return header;
 }
@@ -406,13 +420,12 @@ String HttpHandlers::getSettingsHeaderHTML(String section) {
 String HttpHandlers::getFooterHTML(String page, String section) {
     String footer = m_storage->readAll("/wwwroot/footer.html");
     String js = "";
-    if (!page.equals("")) {
-        js += "<script>";
-        js += m_storage->readAll((String("/wwwroot/") + page + "/utils.js").c_str());
-        js += "\n";
+    js += "<script>";
+    js += m_storage->readAll("/wwwroot/utils.js");
+    js += "\n";
+    if (!page.equals("") && !section.equals(""))
         js += m_storage->readAll((String("/wwwroot/") + page + "/" + section + ".js").c_str());
-        js += "</script>";
-    }
+    js += "</script>";
     footer.replace("<!--{utils.js}-->", js);
 
     return footer;

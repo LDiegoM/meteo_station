@@ -259,6 +259,7 @@ Payload:
 - Add html and api handlers for MQTT settings.
 - Add html and api handlers for Data Logger settings.
 - Add html and api handlers for Date Time settings.
+- Refactor html site to include status and administrative pages.
 
 ## 0.0.8 - 2022-05-10
 

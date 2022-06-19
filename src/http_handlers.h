@@ -55,6 +55,10 @@ class HttpHandlers {
     private:
         const uint16_t METEO_HTTP_PORT = 80;
 
+        const char* STATUS_DESCRIPTION = "This page contains current global status.";
+        const char* SETTINGS_DESCRIPTION = "This page contains current configurations, and allows to modify them.";
+        const char* ADMIN_DESCRIPTION = "This page allows to execute administrative commands.";
+
         const char* MSG_OK = "ok";
         const char* ERR_GENERIC = "Error saving settings. Please try again";
         const char* ERR_WIFI_AP_NOT_FOUND = "AP ssid not found";
@@ -75,7 +79,7 @@ class HttpHandlers {
 
         void defineRoutes();
 
-        String getSettingsHeaderHTML(String section);
+        String getHeaderHTML(String section);
         String getFooterHTML(String page, String section);
         
         String getSettingsWiFiHTML();
