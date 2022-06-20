@@ -1,1 +1,25 @@
-<p>This page contains current global status.</p>
+<div class="container mt-4">
+    <p>This page contains current global status.</p>
+    <div class="card">
+        <div class="card-header">Current measures</div>
+        <div class="card-body">
+            <p>Temp: <strong>{temp} °C</strong>.</p>
+            <p>Pres: <strong>{pres} hPa</strong>.</p>
+            <p>Humi: <strong>{humi} %</strong>.</p>
+        </div>
+    </div>
+    <div class="card mt-2">
+        <div class="card-header">WiFi status</div>
+        <div class="card-body">
+            <p>{wifi_connected}</p>
+            <p>{ssid}</p>
+            <p>{ip}</p>
+        </div>
+    </div>
+    <div class="card mt-2">
+        <div class="card-header">MQTT status</div>
+        <div class="card-body">
+            <p>{mqtt_connected}</p>
+        </div>
+    </div>
+</div>

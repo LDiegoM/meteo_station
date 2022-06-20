@@ -22,6 +22,7 @@ class WiFiConnection {
         bool isConnected();
         bool isModeAP();
         String getIP();
+        String getSSID();
 };
 
 #endif

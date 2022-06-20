@@ -93,6 +93,8 @@ For monitoring porpuses I configured a complet IoT dashboard using [Iot MQTT Pan
 
 Meteo station implements the following API endpoints, listening in port 80:
 
+- GET `/`: Returns HTML page with meteo_station current status.
+
 - GET `/logs`: Downloads a file named `meteo_logs.txt` with all recorded weather measures.
 
 Status resopnse table:
@@ -278,6 +280,7 @@ Payload:
 - Refactor html site to include status and administrative pages.
 - Refactor Data Logger settings.
 - Add html and api handlers for Administrative porpuses.
+- Add html and api handlers for reading current status.
 
 ## 0.0.8 - 2022-05-10
 

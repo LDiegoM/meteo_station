@@ -32,6 +32,10 @@ void getNotFound() {
     httpHandlers->handleGetNotFound();
 }
 
+void getStatus() {
+    httpHandlers->handleGetStatus();
+}
+
 void getSettingsWiFi() {
     httpHandlers->handleGetSettingsWiFi();
 }
@@ -78,12 +82,14 @@ void getAdmin() {
 }
 
 //////////////////// Constructor
-HttpHandlers::HttpHandlers(WiFiConnection *wifi, Storage *storage, Settings *settings, TFT_ILI9163C *tft, DataLogger *dataLogger) {
+HttpHandlers::HttpHandlers(WiFiConnection *wifi, Storage *storage, Settings *settings,
+                           DataLogger *dataLogger, Sensors *sensors, MQTT *mqtt) {
     m_wifi = wifi;
     m_storage = storage;
     m_settings = settings;
-    m_tft = tft;
     m_dataLogger = dataLogger;
+    m_sensors = sensors;
+    m_mqtt = mqtt;
 }
 
 //////////////////// Public methods implementation
@@ -194,12 +200,18 @@ void HttpHandlers::handleGetNotFound() {
     m_server->send(404, "text/html", html);
 }
 
+void HttpHandlers::handleGetStatus() {
+    String html = getHeaderHTML("status");
+    html += getStatusHTML();
+    html += getFooterHTML("status", "");
+    m_server->send(200, "text/html", html);
+}
+
 void HttpHandlers::handleGetSettingsWiFi() {
     String html = getHeaderHTML("settings");
     html += getSettingsWiFiHTML();
     html += getFooterHTML("settings", "wifi");
     m_server->send(200, "text/html", html);
-
 }
 void HttpHandlers::handleAddSettingsWiFi() {
     String body = m_server->arg("plain");
@@ -404,6 +416,8 @@ void HttpHandlers::handleGetAdmin() {
 
 //////////////////// Private methods implementation
 void HttpHandlers::defineRoutes() {
+    m_server->on("/", HTTP_GET, getStatus);
+
     m_server->on("/logs", HTTP_GET, downloadLogs);
     m_server->on("/logs", HTTP_DELETE, deleteLogs);
     m_server->on("/restart", HTTP_POST, restart);
@@ -458,6 +472,35 @@ String HttpHandlers::getFooterHTML(String page, String section) {
     footer.replace("<!--{utils.js}-->", js);
 
     return footer;
+}
+
+String HttpHandlers::getStatusHTML() {
+    String html = m_storage->readAll("/wwwroot/status/status.html");
+
+    html.replace("{temp}", String(m_sensors->temp()));
+    html.replace("{pres}", String(m_sensors->pres()));
+    html.replace("{humi}", String(m_sensors->humi()));
+
+    if (m_wifi->isModeAP()) {
+        html.replace("{wifi_connected}", DISCONNECTED);
+        html.replace("{ssid}", "AP: " + m_wifi->getSSID());
+        html.replace("{ip}", "IP: " + m_wifi->getIP());
+    } else if (m_wifi->isConnected()) {
+        html.replace("{wifi_connected}", CONNECTED);
+        html.replace("{ssid}", "SSID: " + m_wifi->getSSID());
+        html.replace("{ip}", "IP: " + m_wifi->getIP());
+    } else {
+        html.replace("{wifi_connected}", DISCONNECTED);
+        html.replace("{ssid}", "");
+        html.replace("{ip}", "");
+    }
+
+    if (m_mqtt->isConnected())
+        html.replace("{mqtt_connected}", CONNECTED);
+    else
+        html.replace("{mqtt_connected}", DISCONNECTED);
+
+    return html;
 }
 
 String HttpHandlers::getSettingsWiFiHTML() {

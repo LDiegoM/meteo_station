@@ -7,14 +7,15 @@
 #ifndef http_handlers_h
 #define http_handlers_h
 
-#include <TFT_ILI9163C.h>
 #include <WebServer.h>
 #include <ArduinoJson.h>
-#include <wifi_connection.h>
+
+#include <data_logger.h>
+#include <mqtt.h>
+#include <sensors.h>
 #include <settings.h>
 #include <storage.h>
-#include <data_logger.h>
-#include <data_logger.h>
+#include <wifi_connection.h>
 
 struct settings_mqtt_t {
     String server, username, password;
@@ -37,6 +38,8 @@ void getSettings();
 void getBootstrapCSS();
 void getBootstrapJS();
 void getNotFound();
+
+void getStatus();
 
 void getSettingsWiFi();
 void addSettingsWiFi();
@@ -61,6 +64,9 @@ class HttpHandlers {
     private:
         const uint16_t METEO_HTTP_PORT = 80;
 
+        const char* CONNECTED = "Connected";
+        const char* DISCONNECTED = "Disconnected";
+
         const char* MSG_OK = "ok";
         const char* ERR_GENERIC = "Error saving settings. Please try again";
         const char* ERR_WIFI_AP_NOT_FOUND = "AP ssid not found";
@@ -76,15 +82,18 @@ class HttpHandlers {
         WiFiConnection *m_wifi;
         Storage *m_storage;
         Settings *m_settings;
-        TFT_ILI9163C *m_tft;
         WebServer *m_server;
         DataLogger *m_dataLogger;
+        Sensors *m_sensors;
+        MQTT *m_mqtt;
 
         void defineRoutes();
 
         String getHeaderHTML(String section);
         String getFooterHTML(String page, String section);
         
+        String getStatusHTML();
+
         String getSettingsWiFiHTML();
         String getSettingsMQTTHTML();
         String getSettingsLoggerHTML();
@@ -102,7 +111,8 @@ class HttpHandlers {
         settings_date_t parseDateBody(String body);
 
     public:
-        HttpHandlers(WiFiConnection *wifi, Storage *storage, Settings *settings, TFT_ILI9163C *tft, DataLogger *dataLogger);
+        HttpHandlers(WiFiConnection *wifi, Storage *storage, Settings *settings,
+                     DataLogger *dataLogger, Sensors *sensors, MQTT *mqtt);
 
         bool begin();
         void loop();
@@ -116,6 +126,8 @@ class HttpHandlers {
         void handleGetBootstrapCSS();
         void handleGetBootstrapJS();
         void handleGetNotFound();
+
+        void handleGetStatus();
 
         void handleGetSettingsWiFi();
         void handleAddSettingsWiFi();

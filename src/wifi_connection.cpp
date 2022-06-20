@@ -69,3 +69,13 @@ String WiFiConnection::getIP() {
     
     return WiFi.localIP().toString();
 }
+
+String WiFiConnection::getSSID() {
+    if (WiFi.getMode() == WIFI_AP)
+        return SSID_AP;
+    
+    if (WiFi.status() == WL_CONNECTED)
+        return WiFi.SSID();
+    
+    return "";
+}

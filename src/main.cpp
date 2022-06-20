@@ -162,15 +162,15 @@ void setup(void) {
     dataLogger = new DataLogger(sensors, dateTime, storage, config.logger.outputPath, config.logger.writePeriod);
     dataLogger->logData();
 
-    httpHandlers = new HttpHandlers(wifi, storage, settings, tft, dataLogger);
+    mqtt = new MQTT(wifi, sensors, settings, tft, dataLogger, storage);
+    if (!mqtt->begin())
+        Serial.println("MQTT is not connected");
+
+    httpHandlers = new HttpHandlers(wifi, storage, settings, dataLogger, sensors, mqtt);
     if (!httpHandlers->begin()) {
         Serial.println("Could not start http server");
         return;
     }
-
-    mqtt = new MQTT(wifi, sensors, settings, tft, dataLogger, storage, messageReceived);
-    if (!mqtt->begin())
-        Serial.println("MQTT is not connected");
 
     drawScreen();
     printDateTime();

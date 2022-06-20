@@ -9,14 +9,13 @@ void messageReceived(char* topic, uint8_t* payload, unsigned int length) {
 
 //////////////////// Constructor
 MQTT::MQTT(WiFiConnection *wifi, Sensors *sensors, Settings *settings, TFT_ILI9163C *tft,
-           DataLogger *dataLogger, Storage *storage, MQTT_CALLBACK_SIGNATURE) {
+           DataLogger *dataLogger, Storage *storage) {
     m_wifi = wifi;
     m_sensors = sensors;
     m_settings = settings;
     m_tft = tft;
     m_dataLogger = dataLogger;
     m_storage = storage;
-    this->callback = callback;
     m_connected = false;
 }
 
@@ -29,7 +28,7 @@ bool MQTT::begin() {
     m_secureClient->setCACert(m_settings->getSettings().mqtt.ca_cert);
 
     m_mqttClient = new PubSubClient(*m_secureClient);
-    m_mqttClient->setCallback(callback);
+    m_mqttClient->setCallback(messageReceived);
 
     m_tmrConnectMQTT = new Timer(5000);
     m_tmrSendValuesToMQTT = new Timer(m_settings->getSettings().mqtt.sendPeriod * 1000);
