@@ -1,7 +1,7 @@
 function saveDate() {
     const body = getUpdateBody();
 
-    executeSettingsCall("/date", "PUT", body).then((updOk) => {
+    executeCall("/settings/date", "PUT", body).then((updOk) => {
         if (updOk == true) {
             document.location.reload(true);
         }

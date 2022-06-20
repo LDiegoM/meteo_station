@@ -1,7 +1,7 @@
 function saveMQTT() {
     const body = getUpdateBody();
 
-    executeSettingsCall("/mqtt", "PUT", body).then((updOk) => {
+    executeCall("/settings/mqtt", "PUT", body).then((updOk) => {
         if (updOk == true) {
             document.location.reload(true);
         }

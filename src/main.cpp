@@ -147,12 +147,6 @@ void setup(void) {
     wifi = new WiFiConnection(settings, tft);
     wifi->begin();
 
-    httpHandlers = new HttpHandlers(wifi, storage, settings, tft);
-    if (!httpHandlers->begin()) {
-        Serial.println("Could not start http server");
-        return;
-    }
-
     tempRep = new NumberSet(tft, 3, 20, NS_SFLT, 2, BACKGROUND, FORE_COLOR);
     presHumiRep = new NumberSet(tft, 64 + 3, 20, NS_SFLT, 2, BACKGROUND, FORE_COLOR);
     timeRep = new NumberSet(tft, (tft->width() - NS_HHMM_3_W) / 2, tempRep->y() + tempRep->height() + 15, NS_HHMM, 3, BACKGROUND, FORE_COLOR);
@@ -167,6 +161,12 @@ void setup(void) {
 
     dataLogger = new DataLogger(sensors, dateTime, storage, config.logger.outputPath, config.logger.writePeriod);
     dataLogger->logData();
+
+    httpHandlers = new HttpHandlers(wifi, storage, settings, tft, dataLogger);
+    if (!httpHandlers->begin()) {
+        Serial.println("Could not start http server");
+        return;
+    }
 
     mqtt = new MQTT(wifi, sensors, settings, tft, dataLogger, storage, messageReceived);
     if (!mqtt->begin())

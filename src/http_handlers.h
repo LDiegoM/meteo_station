@@ -14,6 +14,7 @@
 #include <settings.h>
 #include <storage.h>
 #include <data_logger.h>
+#include <data_logger.h>
 
 struct settings_mqtt_t {
     String server, username, password;
@@ -30,6 +31,7 @@ struct settings_date_t {
 /////////// HTTP Handlers
 void downloadLogs();
 void deleteLogs();
+void restart();
 void getSettings();
 
 void getBootstrapCSS();
@@ -51,13 +53,13 @@ void updSettingsLogger();
 void getSettingsDate();
 void updSettingsDate();
 
+void delSettings();
+
+void getAdmin();
+
 class HttpHandlers {
     private:
         const uint16_t METEO_HTTP_PORT = 80;
-
-        const char* STATUS_DESCRIPTION = "This page contains current global status.";
-        const char* SETTINGS_DESCRIPTION = "This page contains current configurations, and allows to modify them.";
-        const char* ADMIN_DESCRIPTION = "This page allows to execute administrative commands.";
 
         const char* MSG_OK = "ok";
         const char* ERR_GENERIC = "Error saving settings. Please try again";
@@ -76,6 +78,7 @@ class HttpHandlers {
         Settings *m_settings;
         TFT_ILI9163C *m_tft;
         WebServer *m_server;
+        DataLogger *m_dataLogger;
 
         void defineRoutes();
 
@@ -87,6 +90,8 @@ class HttpHandlers {
         String getSettingsLoggerHTML();
         String getSettingsDateHTML();
 
+        String getAdminHTML();
+
         wifiAP_t parseWiFiBody(String body);
         std::vector<wifiAP_t> parseMultiWiFiBody(String body);
 
@@ -97,7 +102,7 @@ class HttpHandlers {
         settings_date_t parseDateBody(String body);
 
     public:
-        HttpHandlers(WiFiConnection *wifi, Storage *storage, Settings *settings, TFT_ILI9163C *tft);
+        HttpHandlers(WiFiConnection *wifi, Storage *storage, Settings *settings, TFT_ILI9163C *tft, DataLogger *dataLogger);
 
         bool begin();
         void loop();
@@ -105,6 +110,7 @@ class HttpHandlers {
         // HTTP handlers
         void handleDownloadLogs();
         bool handleDeleteLogs();
+        void handleRestart();
         void handleGetSettings();
 
         void handleGetBootstrapCSS();
@@ -125,6 +131,10 @@ class HttpHandlers {
 
         void handleGetSettingsDate();
         void handleUpdSettingsDate();
+
+        void handleDelSettings();
+
+        void handleGetAdmin();
 };
 
 extern HttpHandlers *httpHandlers;

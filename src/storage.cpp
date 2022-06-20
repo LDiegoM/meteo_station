@@ -130,5 +130,8 @@ String Storage::getUsed() {
 }
 
 String Storage::getFree() {
-    return String((float) (LittleFS.totalBytes() - LittleFS.usedBytes()) / 1024) + " kb";
+    size_t totalBytes = LittleFS.totalBytes();
+    size_t usedBytes = LittleFS.usedBytes();
+    float freePercentage = (float) (totalBytes - usedBytes) / (float) totalBytes * 100;
+    return String((float) (totalBytes - usedBytes) / 1024) + " kb (" + String(freePercentage) + "%)";
 }

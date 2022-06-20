@@ -1,9 +1,9 @@
-async function executeSettingsCall(path, method, body) {
+async function executeCall(path, method, body) {
     console.log("Executing command " + method + " to " + path);
     console.log("body: " + body);
     var ok = false;
     const response = await fetch(
-        '/settings' + path,
+        path,
         {
             method: method,
             headers: {

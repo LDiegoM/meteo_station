@@ -2,7 +2,7 @@ function executeDeleteAP(ap) {
     var ok = true;
     if (ap != "") {
         const body = '{"ap":"' + ap + '"}';
-        executeSettingsCall("/wifi", "DELETE", body).then((callOK) => {
+        executeCall("/settings/wifi", "DELETE", body).then((callOK) => {
             ok = callOK;
         });
     }
@@ -20,7 +20,7 @@ async function executeUpdateAPs() {
 
     var ok = false;
     if (body != '{"aps":[]}') {
-        ok = await executeSettingsCall("/wifi", "PUT", body);
+        ok = await executeCall("/settings/wifi", "PUT", body);
     }
     return ok;
 }
@@ -47,7 +47,7 @@ async function executeInsertAP() {
     var ok = false;
     if (ap != "") {
         const body = '{"ap":"' + ap + '","pw":"' + pw + '"}';
-        ok = await executeSettingsCall("/wifi", "POST", body);
+        ok = await executeCall("/settings/wifi", "POST", body);
     }
     return ok;
 }

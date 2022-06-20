@@ -12,6 +12,10 @@ void deleteLogs(void) {
         dataLogger->logData();
 }
 
+void restart() {
+    httpHandlers->handleRestart();
+}
+
 void getSettings() {
     httpHandlers->handleGetSettings();
 }
@@ -65,12 +69,21 @@ void updSettingsDate() {
     httpHandlers->handleUpdSettingsDate();
 }
 
+void delSettings() {
+    httpHandlers->handleDelSettings();
+}
+
+void getAdmin() {
+    httpHandlers->handleGetAdmin();
+}
+
 //////////////////// Constructor
-HttpHandlers::HttpHandlers(WiFiConnection *wifi, Storage *storage, Settings *settings, TFT_ILI9163C *tft) {
+HttpHandlers::HttpHandlers(WiFiConnection *wifi, Storage *storage, Settings *settings, TFT_ILI9163C *tft, DataLogger *dataLogger) {
     m_wifi = wifi;
     m_storage = storage;
     m_settings = settings;
     m_tft = tft;
+    m_dataLogger = dataLogger;
 }
 
 //////////////////// Public methods implementation
@@ -136,6 +149,11 @@ bool HttpHandlers::handleDeleteLogs() {
         m_server->send(500, "text/plain", "could not delete file");
     
     return flgOK;
+}
+
+void HttpHandlers::handleRestart() {
+    m_server->send(200, "text/plain", MSG_OK);
+    ESP.restart();
 }
 
 void HttpHandlers::handleGetSettings() {
@@ -363,10 +381,32 @@ void HttpHandlers::handleUpdSettingsDate() {
     m_server->send(200, "text/plain", MSG_OK);
 }
 
+void HttpHandlers::handleDelSettings() {
+    if (!m_storage->exists(SETTINGS_FILE)) {
+        m_server->send(404, "text/plain", "not found");
+        return;
+    }
+
+    if (!m_storage->remove(SETTINGS_FILE)) {
+        m_server->send(500, "text/plain", ERR_GENERIC);
+        return;        
+    }
+
+    handleRestart();
+}
+
+void HttpHandlers::handleGetAdmin() {
+    String html = getHeaderHTML("admin");
+    html += getAdminHTML();
+    html += getFooterHTML("admin", "admin");
+    m_server->send(200, "text/html", html);
+}
+
 //////////////////// Private methods implementation
 void HttpHandlers::defineRoutes() {
     m_server->on("/logs", HTTP_GET, downloadLogs);
     m_server->on("/logs", HTTP_DELETE, deleteLogs);
+    m_server->on("/restart", HTTP_POST, restart);
 
     // TODO: When wifi settings is fully implemented, redirect to wifi settings handler.
     m_server->on("/settings", HTTP_GET, getSettings);
@@ -389,26 +429,15 @@ void HttpHandlers::defineRoutes() {
     m_server->on("/settings/date", HTTP_GET, getSettingsDate);
     m_server->on("/settings/date", HTTP_PUT, updSettingsDate);
 
+    m_server->on("/settings", HTTP_DELETE, delSettings);
+
+    m_server->on("/admin", HTTP_GET, getAdmin);
+
     m_server->onNotFound(getNotFound);
 }
 
 String HttpHandlers::getHeaderHTML(String section) {
     String header = m_storage->readAll("/wwwroot/header.html");
-
-    String title = "";
-    String description = "";
-    if (section.equals("status")) {
-        title = description;
-        description = STATUS_DESCRIPTION;
-    } else if (section.equals("settings")) {
-        title = "configurations";
-        description = SETTINGS_DESCRIPTION;
-    } else if (section.equals("admin")) {
-        title = "administration";
-        description = ADMIN_DESCRIPTION;
-    }
-    header.replace("{title}", title);
-    header.replace("{description}", description);
 
     header.replace("{active_status}", (section.equals("status") ? " active" : ""));
     header.replace("{active_settings}", (section.equals("settings") ? " active" : ""));
@@ -473,6 +502,16 @@ String HttpHandlers::getSettingsDateHTML() {
     html.replace("{server}", String(settings.dateTime.server));
     html.replace("{gmtOffset}", String(settings.dateTime.gmtOffset));
     html.replace("{daylightOffset}", String(settings.dateTime.daylightOffset));
+
+    return html;
+}
+
+String HttpHandlers::getAdminHTML() {
+    String html = m_storage->readAll("/wwwroot/admin/admin.html");
+
+    html.replace("{free_storage}", m_storage->getFree());
+    html.replace("{logs_size}", m_dataLogger->logSize());
+    html.replace("{last_date}", m_dataLogger->getLastLogTime());
 
     return html;
 }
