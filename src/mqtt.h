@@ -49,8 +49,6 @@ class MQTT {
         const char* MQTT_TOPIC_RES_LOGSIZE = "topic-meteo-res-logsize";
         const char* MQTT_TOPIC_RES_FREESTO = "topic-meteo-res-freesto";
 
-        MQTT_CALLBACK_SIGNATURE;
-
         struct command {
             String cmd, value;
         } m_command;
@@ -65,7 +63,7 @@ class MQTT {
 
     public:
         MQTT(WiFiConnection *wifi, Sensors *sensors, Settings *settings, TFT_ILI9163C *tft,
-             DataLogger *dataLogger, Storage *storage, MQTT_CALLBACK_SIGNATURE);
+             DataLogger *dataLogger, Storage *storage);
         
         bool begin();
         bool connect(bool verbose);
