@@ -113,6 +113,12 @@ Status resopnse table:
 |       404        | Logs file wasn't found in SPIFFS memory. |
 |       204        | Logs file was successfully removed. |
 
+- POST `/restart`: Restarts meteo_station.
+
+| HTTP status code | Meaning |
+|---               |---      |
+|       200        | meteo_station was succesfully restarted. |
+
 - GET `/settings`: Returns current settings as they're written in setings file in the response body.
 
 Status resopnse table:
@@ -242,6 +248,16 @@ Payload:
 |       400        | Invalid payload or invalid parameter. |
 |       200        | Date Time configurations successfully updated. |
 
+- DELETE `/settings`: Deletes current settings and restart meteo_station.
+
+| HTTP status code | Meaning |
+|---               |---      |
+|       500        | There was an internal error deleting settings file. |
+|       404        | Settings file wasn't found. |
+|       200        | Settings file was successfully removed. |
+
+- GET `/admin`: Returns HTML page that allows to manage meteo_station.
+
 # Author
 
 - Main idea, development and functional prototype by Diego M. Lopez (ldiegom@gmail.com)
@@ -261,6 +277,7 @@ Payload:
 - Add html and api handlers for Date Time settings.
 - Refactor html site to include status and administrative pages.
 - Refactor Data Logger settings.
+- Add html and api handlers for Administrative porpuses.
 
 ## 0.0.8 - 2022-05-10
 

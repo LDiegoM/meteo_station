@@ -1,7 +1,7 @@
 function saveLogger() {
     const body = getUpdateBody();
 
-    executeSettingsCall("/logger", "PUT", body).then((updOk) => {
+    executeCall("/settings/logger", "PUT", body).then((updOk) => {
         if (updOk == true) {
             document.location.reload(true);
         }
