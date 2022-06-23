@@ -281,6 +281,7 @@ Payload:
 - Refactor Data Logger settings.
 - Add html and api handlers for Administrative porpuses.
 - Add html and api handlers for reading current status.
+- Create display class for display logic abstraction.
 
 ## 0.0.8 - 2022-05-10
 
