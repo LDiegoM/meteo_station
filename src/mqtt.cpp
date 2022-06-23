@@ -49,7 +49,7 @@ bool MQTT::connect(bool verbose) {
     
     // If wifi is not connected, try to connect
     if (!m_wifi->isConnected()) {
-        if (!m_wifi->connect())
+        if (!m_wifi->connect(verbose))
             return false;
     }
 

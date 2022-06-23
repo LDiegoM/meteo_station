@@ -18,27 +18,33 @@ bool WiFiConnection::begin() {
                            m_settings->getSettings().wifiAPs[i].password.c_str());
     }
 
-    if (!connect()) {
+    if (!connect(true)) {
         // If no wifi ap could connect, then begin default AP to enable configuration.
         return beginAP();
     }
     return true;
 }
 
-bool WiFiConnection::connect() {
-    m_tft->fillScreen(BLACK);
-    m_tft->setTextColor(WHITE);
-    m_tft->setCursor(2, 20);
+bool WiFiConnection::connect(bool verbose) {
+    if (verbose) {
+        m_tft->fillScreen(BLACK);
+        m_tft->setTextColor(WHITE);
+        m_tft->setCursor(2, 20);
 
-    m_tft->print("WiFi Connect");
-    m_tft->setCursor(2, m_tft->getCursorY() + 20);
-    
+        m_tft->print("WiFi Connect");
+        m_tft->setCursor(2, m_tft->getCursorY() + 20);
+    }
+
     if (m_wifiMulti->run() != WL_CONNECTED) {
-        m_tft->print("FAIL");
+        if (verbose)
+            m_tft->print("FAIL");
         return false;
     }
-    m_tft->print("OK: " + WiFi.SSID());
-    delay(1000);
+
+    if (verbose) {
+        m_tft->print("OK: " + WiFi.SSID());
+        delay(1000);
+    }
     return true;
 }
 
@@ -64,9 +70,12 @@ bool WiFiConnection::isModeAP() {
 }
 
 String WiFiConnection::getIP() {
+    if (WiFi.getMode() == WIFI_AP)
+        return WiFi.softAPIP().toString();
+
     if (!isConnected())
         return "";
-    
+
     return WiFi.localIP().toString();
 }
 
