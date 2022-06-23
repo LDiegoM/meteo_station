@@ -20,7 +20,8 @@ class Display {
         DateTime* m_dateTime;
 
         NumberSet *m_tempRep, *m_presHumiRep, *m_ddmmRep, *m_yearRep, *m_timeRep;
-        bool m_showPres;
+        NumberSet *m_presRep, *m_humiRep;
+        bool m_showPres, m_apMode;
         Timer *m_tmrRefreshTime, *m_tmrShowPres;
 
         void drawScreen();

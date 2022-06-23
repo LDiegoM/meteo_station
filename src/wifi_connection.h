@@ -17,7 +17,7 @@ class WiFiConnection {
         WiFiConnection(Settings *settings, TFT_ILI9163C *tft);
 
         bool begin();
-        bool connect();
+        bool connect(bool verbose);
         bool beginAP();
         bool isConnected();
         bool isModeAP();
