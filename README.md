@@ -283,6 +283,7 @@ Payload:
 - Add html and api handlers for reading current status.
 - Create display class for display logic abstraction.
 - Add new display layout for mobile AP mode with no date time.
+- Get bootstrap files from web when wifi is not in AP mode.
 
 ## 0.0.8 - 2022-05-10
 

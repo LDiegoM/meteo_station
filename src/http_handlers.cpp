@@ -457,6 +457,11 @@ String HttpHandlers::getHeaderHTML(String section) {
     header.replace("{active_settings}", (section.equals("settings") ? " active" : ""));
     header.replace("{active_admin}", (section.equals("admin") ? " active" : ""));
 
+    if (!m_wifi->isModeAP()) {
+        header.replace("/bootstrap.min.css", BOOTSTRAP_CSS);
+        header.replace("/bootstrap.bundle.min.js", BOOTSTRAP_JS);
+    }
+
     return header;
 }
 
