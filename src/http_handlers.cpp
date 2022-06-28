@@ -168,8 +168,7 @@ void HttpHandlers::handleGetSettings() {
         return;
     }
 
-    String content = m_storage->readAll(SETTINGS_FILE);
-    m_server->send(200, "application/json", content);
+    m_server->send(200, "application/json", m_storage->readAll(SETTINGS_FILE));
 }
 
 void HttpHandlers::handleGetBootstrapCSS() {
@@ -457,7 +456,7 @@ String HttpHandlers::getHeaderHTML(String section) {
     header.replace("{active_settings}", (section.equals("settings") ? " active" : ""));
     header.replace("{active_admin}", (section.equals("admin") ? " active" : ""));
 
-    if (!m_wifi->isModeAP()) {
+    if (!m_wifi->isModeAP() && m_mqtt->isConnected()) {
         header.replace("/bootstrap.min.css", BOOTSTRAP_CSS);
         header.replace("/bootstrap.bundle.min.js", BOOTSTRAP_JS);
     }
@@ -499,6 +498,8 @@ String HttpHandlers::getStatusHTML() {
         html.replace("{ssid}", "");
         html.replace("{ip}", "");
     }
+
+    html.replace("{freeMem}", String((float) ESP.getFreeHeap() / 1024) + " kb");
 
     if (m_mqtt->isConnected())
         html.replace("{mqtt_connected}", CONNECTED);

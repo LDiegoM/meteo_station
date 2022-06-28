@@ -7,7 +7,7 @@
 #include <date_time.h>
 #include <display.h>
 #include <http_handlers.h>
-#include <mqtt.h>
+#include <mqtt_handlers.h>
 #include <number_set.h>
 #include <sensors.h>
 #include <settings.h>
@@ -45,7 +45,6 @@ Display *display;
 
 void setup(void) {
     Serial.begin(115200);
-    Serial.println("begin setup - free mem: " + String((float) ESP.getFreeHeap() / 1024) + " kb");
 
     tft = new TFT_ILI9163C(TFT_CS, TFT_DC);
     tft->begin();
@@ -101,8 +100,6 @@ void setup(void) {
 
     display = new Display(tft, BACKGROUND, FORE_COLOR, sensors, wifi, dateTime);
     display->begin();
-
-    Serial.println("end setup - free mem: " + String((float) ESP.getFreeHeap() / 1024) + " kb");
 }
 
 void loop() {

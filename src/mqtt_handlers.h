@@ -19,7 +19,7 @@
 #include <storage.h>
 
 //////////////////// MQTT Handlers
-void messageReceived(char* topic, uint8_t* payload, unsigned int length);
+void mqttMessageReceived(char* topic, uint8_t* payload, unsigned int length);
 
 class MQTT {
     private:

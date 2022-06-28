@@ -33,25 +33,15 @@ bool Storage::begin() {
     return true;
 }
 
-char* Storage::readAll(const char *path) {
-    uint8_t* buffer;
-    buffer = (uint8_t*)malloc(1);  // Allocate memory for the file and a terminating null char.
-    buffer[0] = '\0';              // Add the terminating null char.
-
+String Storage::readAll(const char *path) {
     File file = LittleFS.open(path, FILE_READ);
     if (!file) {
         Serial.println("Failed to open file for read");
-        return (char*) buffer;
+        return "";
     }
     delay(100);
 
-    unsigned int fileSize = file.size();     // Get the file size.
-    buffer = (uint8_t*)malloc(fileSize + 1); // Allocate memory for the file and a terminating null char.
-    file.read(buffer, fileSize);             // Read the file into the buffer.
-    buffer[fileSize] = '\0';                 // Add the terminating null char.
-    file.close();
-    
-    return (char*) buffer;
+    return file.readString();
 }
 
 // Write to the SD card

@@ -54,7 +54,7 @@ bool DataLogger::writeData() {
         return false;
     }
 
-    String fullData = logTime +  getLogData();
+    String fullData = logTime + getLogData();
     Serial.print("log: " + fullData);
 
     bool res = m_storage->appendFile(m_filePath.c_str(), fullData.c_str());

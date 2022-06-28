@@ -1,9 +1,9 @@
-#include <mqtt.h>
+#include <mqtt_handlers.h>
 
 MQTT *mqtt = nullptr;
 
 //////////////////// MQTT Handlers
-void messageReceived(char* topic, uint8_t* payload, unsigned int length) {
+void mqttMessageReceived(char* topic, uint8_t* payload, unsigned int length) {
     mqtt->processReceivedMessage(topic, payload, length);
 }
 
@@ -24,11 +24,16 @@ bool MQTT::begin() {
     if (!m_settings->isSettingsOK() || m_wifi->isModeAP())
         return false;
 
+    unsigned int strLen = m_settings->getSettings().mqtt.ca_cert.length() + 1;
+    char charData[strLen];
+    m_settings->getSettings().mqtt.ca_cert.toCharArray(charData, strLen);
+    charData[strLen] = '\0';
+
     m_secureClient = new WiFiClientSecure();
-    m_secureClient->setCACert(m_settings->getSettings().mqtt.ca_cert);
+    m_secureClient->setCACert(charData);
 
     m_mqttClient = new PubSubClient(*m_secureClient);
-    m_mqttClient->setCallback(messageReceived);
+    m_mqttClient->setCallback(mqttMessageReceived);
 
     m_tmrConnectMQTT = new Timer(5000);
     m_tmrSendValuesToMQTT = new Timer(m_settings->getSettings().mqtt.sendPeriod * 1000);

@@ -107,7 +107,6 @@ bool Settings::setMQTTCertificate(String certData) {
     if (m_settings.mqtt.caCertPath.equals(""))
         return false;
 
-    free(m_settings.mqtt.ca_cert);
     unsigned int strLen = certData.length() + 1;
     char charData[strLen];
     certData.toCharArray(charData, strLen);
@@ -138,7 +137,7 @@ bool Settings::readSettings() {
     }
 
     StaticJsonDocument<1024> configs;
-    char *settingsJson = m_storage->readAll(SETTINGS_FILE);
+    String settingsJson = m_storage->readAll(SETTINGS_FILE);
     DeserializationError error = deserializeJson(configs, settingsJson);
     if (error) {
         Serial.print(F("deserializeJson() failed: "));
