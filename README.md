@@ -268,6 +268,8 @@ Payload:
 
 ## Unreleased
 
+## 1.0.0 - 2022-06-27
+
 - Change storage to LittleFS, due to microSD is unstable.
 - Add get free storage functionality and send to MQTT.
 - Add capability to have empty settings.
