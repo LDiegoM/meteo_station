@@ -14,7 +14,7 @@ class Storage {
         Storage(TFT_ILI9163C *tft);
 
         bool begin();
-        char* readAll(const char *path);
+        String readAll(const char *path);
         // writeFile ovewrites all file content.
         bool writeFile(const char *path, const char *message);
         bool appendFile(const char *path, const char *message);

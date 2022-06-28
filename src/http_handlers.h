@@ -11,7 +11,7 @@
 #include <ArduinoJson.h>
 
 #include <data_logger.h>
-#include <mqtt.h>
+#include <mqtt_handlers.h>
 #include <sensors.h>
 #include <settings.h>
 #include <storage.h>
