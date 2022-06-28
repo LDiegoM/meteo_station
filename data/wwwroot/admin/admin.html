@@ -1,0 +1,29 @@
+<div class="container mt-4">
+	<p>This page allows to manage meteo_station.</p>
+    <div class="card">
+        <div class="card-header">Restart</div>
+        <div class="card-body">
+            <p>Use this command to restart meteo_station and apply new settings.</p>
+            <button type="button" class="btn btn-danger mt-2" onclick="restart();">Restart</button>
+        </div>
+    </div>
+    <div class="card mt-2">
+        <div class="card-header">Settings</div>
+        <div class="card-body">
+            <p>Use this command to reset meteo_station settings.</p>
+            <p>On next reboot meteo_station will not connect to wifi. Instead it'll create an AP called <strong>meteo_station</strong>.</p>
+            <button type="button" class="btn btn-danger mt-2" onclick="clearSettings();">Reset settings and restart</button>
+        </div>
+    </div>
+    <div class="card mt-2">
+        <div class="card-header">Data Logger</div>
+        <div class="card-body">
+            <p>Current free storage size: <strong>{free_storage}</strong></p>
+            <p>Current logs file size: <strong>{logs_size}</strong></p>
+            <p>Last logged data: <strong>{last_date}</strong></p>
+            <button type="button" class="btn btn-primary" onclick="downloadLogs();">Download logs</button>
+            <p class="mt-4">Use this command to clear logs file.</p>
+            <button type="button" class="btn btn-danger" onclick="clearLogs();">Clear logs</button>
+        </div>
+    </div>
+</div>
