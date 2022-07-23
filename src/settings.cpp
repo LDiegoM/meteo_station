@@ -115,7 +115,11 @@ bool Settings::setMQTTCertificate(String certData) {
     m_storage->remove(m_settings.mqtt.caCertPath.c_str());
     bool ok = m_storage->writeFile(m_settings.mqtt.caCertPath.c_str(), charData);
     if (ok) {
-        m_settings.mqtt.ca_cert = m_storage->readAll(m_settings.mqtt.caCertPath.c_str());
+        free(m_settings.mqtt.ca_cert);
+        String cert = m_storage->readAll(m_settings.mqtt.caCertPath.c_str());
+        m_settings.mqtt.ca_cert = (char*)malloc(cert.length() + 1);
+        cert.toCharArray(m_settings.mqtt.ca_cert, cert.length());
+        m_settings.mqtt.ca_cert[cert.length()] = '\0';
     }
     return ok;
 }
@@ -152,7 +156,10 @@ bool Settings::readSettings() {
     m_settings.mqtt.password = jsonObj["mqtt"]["password"].as<String>();
     m_settings.mqtt.caCertPath = jsonObj["mqtt"]["crt_path"].as<String>();
     m_settings.mqtt.sendPeriod = jsonObj["mqtt"]["send_period_seconds"].as<uint16_t>();
-    m_settings.mqtt.ca_cert = m_storage->readAll(m_settings.mqtt.caCertPath.c_str());
+    String cert = m_storage->readAll(m_settings.mqtt.caCertPath.c_str());
+    m_settings.mqtt.ca_cert = (char*)malloc(cert.length() + 1);
+    cert.toCharArray(m_settings.mqtt.ca_cert, cert.length());
+    m_settings.mqtt.ca_cert[cert.length()] = '\0';
 
     m_settings.wifiAPs.clear();
     for (int i = 0; i < jsonObj["wifi"].size(); i++) {

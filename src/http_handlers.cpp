@@ -112,13 +112,10 @@ void HttpHandlers::loop() {
 
 /////////// HTTP Handlers
 void HttpHandlers::handleDownloadLogs() {
-    Serial.println("Starting logs download");
     if (!m_storage->exists(m_settings->getSettings().logger.outputPath.c_str())) {
         m_server->send(404, "text/plain", "not found");
         return;
     }
-
-    Serial.println("File exists");
 
     File file = m_storage->open(m_settings->getSettings().logger.outputPath.c_str());
     if (!file) {
@@ -126,17 +123,13 @@ void HttpHandlers::handleDownloadLogs() {
         return;
     }
 
-    Serial.println("File opened - size: " + String(file.size()));
     String dataType = "application/octet-stream";
 
-    Serial.println("Sending header");
     m_server->sendHeader("Content-Disposition", "inline; filename=meteo_logs.txt");
 
-    Serial.println("Start file streaming");
     if (m_server->streamFile(file, dataType) != file.size())
         Serial.println("Sent different data length than expected");
     
-    Serial.println("File close");
     file.close();
 }
 
@@ -192,10 +185,8 @@ void HttpHandlers::handleGetBootstrapJS() {
 }
 
 void HttpHandlers::handleGetNotFound() {
-    Serial.println("not found?");
     String html = m_storage->readAll("/wwwroot/error.html");
     html.replace("{error_description}", "Resource not found");
-    Serial.println(html);
     m_server->send(404, "text/html", html);
 }
 

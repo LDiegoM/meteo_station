@@ -24,13 +24,8 @@ bool MQTT::begin() {
     if (!m_settings->isSettingsOK() || m_wifi->isModeAP())
         return false;
 
-    unsigned int strLen = m_settings->getSettings().mqtt.ca_cert.length() + 1;
-    char charData[strLen];
-    m_settings->getSettings().mqtt.ca_cert.toCharArray(charData, strLen);
-    charData[strLen] = '\0';
-
     m_secureClient = new WiFiClientSecure();
-    m_secureClient->setCACert(charData);
+    m_secureClient->setCACert(m_settings->getSettings().mqtt.ca_cert);
 
     m_mqttClient = new PubSubClient(*m_secureClient);
     m_mqttClient->setCallback(mqttMessageReceived);
