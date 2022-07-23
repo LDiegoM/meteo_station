@@ -7,19 +7,19 @@ Sensors::Sensors(uint8_t dhtPin, uint8_t dhtType, TFT_ILI9163C *tft) {
     m_updated = false;
     m_tft = tft;
 
-    m_tempValue = 0;
-    m_tempValue2 = 0;
-    m_humiValue = 0;
-    m_presValue = 0;
+    m_tempValue = 17.5;
+    m_tempValue2 = 19.4;
+    m_humiValue = 45.4;
+    m_presValue = 1013;
 
-    m_dhtSensor = new DHT(m_dhtPin, m_dhtType);
-    m_bmpSensor = new Adafruit_BMP085();
+    m_dhtSensor = nullptr; // new DHT(m_dhtPin, m_dhtType);
+    m_bmpSensor = nullptr; // new Adafruit_BMP085();
 
     m_tmrRefreshValues = new Timer(REFRESH_TIME_MILLIS);
 }
 
 //////////////////// Public methods implementation
-bool Sensors::begin() {
+/*bool Sensors::begin() {
     Timer *timeOut = new Timer(10 * 1000);
     timeOut->start();
 
@@ -51,6 +51,24 @@ bool Sensors::begin() {
 
     return true;
 }
+*/
+
+bool Sensors::begin() {
+    m_tft->setCursor(2, m_tft->getCursorY() + 20);
+    m_tft->print("Start sensor");
+
+    m_tft->setCursor(2, m_tft->getCursorY() + 20);
+    m_tft->print("Sensor OK");
+    delay(1000);
+
+    // Do a first value read
+    // readValues();
+    m_updated = true;
+
+    startCycle();
+
+    return true;
+}
 
 void Sensors::startCycle() {
     m_tmrRefreshValues->start();
@@ -66,7 +84,8 @@ void Sensors::loop() {
     }
 
     if (m_tmrRefreshValues->isTime()) {
-        readValues();
+        //readValues();
+        m_updated = true;
     }
 }
 

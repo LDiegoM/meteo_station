@@ -94,7 +94,11 @@ bool HttpHandlers::begin() {
     if (!m_settings->isSettingsOK())
         return false;
 
+#ifdef ESP8266
+    m_server = new ESP8266WebServer(METEO_HTTP_PORT);
+#elif defined(ESP32)
     m_server = new WebServer(METEO_HTTP_PORT);
+#endif
 
     defineRoutes();
 
@@ -204,7 +208,7 @@ void HttpHandlers::handleGetBootstrapCSS() {
     file.close();
 }
 void HttpHandlers::handleGetBootstrapJS() {
-    File file = LittleFS.open("/wwwroot/bootstrap.bundle.min.js.gz");
+    File file = LittleFS.open("/wwwroot/bootstrap.bundle.min.js.gz", "r");
     if (!file) {
         m_server->send(404);
         return;
@@ -270,7 +274,7 @@ void HttpHandlers::handleUpdSettingsWiFi() {
         return;
     }
 
-    for (int i = 0; i < aps.size(); i++) {
+    for (size_t i = 0; i < aps.size(); i++) {
         if (!m_settings->updWifiAP(aps[i].ssid.c_str(), aps[i].password.c_str())) {
             m_server->send(404, "text/plain", ERR_WIFI_AP_NOT_FOUND);
             return;
@@ -508,7 +512,7 @@ String HttpHandlers::getStatusHTML() {
 
 String HttpHandlers::getSettingsWiFiHTML() {
     String htmlUpdate = "";
-    for (int i = 0; i < m_settings->getSettings().wifiAPs.size(); i++) {
+    for (size_t i = 0; i < m_settings->getSettings().wifiAPs.size(); i++) {
         String htmlAP = m_storage->readAll("/wwwroot/settings/wifi_update_ap.html");
         htmlAP.replace("{ap_name}", m_settings->getSettings().wifiAPs[i].ssid);
         htmlAP += "\n";
@@ -592,7 +596,7 @@ std::vector<wifiAP_t> HttpHandlers::parseMultiWiFiBody(String body) {
     }
     JsonObject jsonObj = configs.as<JsonObject>();
 
-    for (int i = 0; i < jsonObj["aps"].size(); i++) {
+    for (size_t i = 0; i < jsonObj["aps"].size(); i++) {
         wifiAP_t ap;
         ap.ssid = jsonObj["aps"][i]["ap"].as<String>();
         ap.password = jsonObj["aps"][i]["pw"].as<String>();
@@ -622,7 +626,7 @@ settings_mqtt_t HttpHandlers::parseMQTTBody(String body) {
     mqttValues.sendPeriod = jsonObj["send_period"].as<uint16_t>();
 
     String cert = "";
-    for (int i = 0; i < jsonObj["cert"].size(); i++) {
+    for (size_t i = 0; i < jsonObj["cert"].size(); i++) {
         cert += jsonObj["cert"][i].as<String>() + "\n";
     }
     mqttValues.certData = cert;

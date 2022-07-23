@@ -22,7 +22,7 @@ class Storage {
         size_t fileSize(const char *path);
         bool exists(const char *path);
         File open(const char *path);
-        File open(const char *path, const char *mode, const bool create);
+        File open(const char *path, const char *mode);
         String getSize();
         String getUsed();
         String getFree();

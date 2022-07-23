@@ -25,7 +25,12 @@ bool MqttHandlers::begin() {
         return false;
 
     m_secureClient = new WiFiClientSecure();
+#ifdef ESP8266
+    caCertX509 = new X509List(m_settings->getSettings().mqtt.ca_cert);
+    m_secureClient->setTrustAnchors(caCertX509);
+#else
     m_secureClient->setCACert(m_settings->getSettings().mqtt.ca_cert);
+#endif
 
     m_mqttClient = new PubSubClient(*m_secureClient);
     m_mqttClient->setCallback(mqttMessageReceived);
@@ -53,6 +58,7 @@ bool MqttHandlers::connect(bool verbose) {
             return false;
     }
 
+    Serial.println("WiFi connected. Connecting MQTT");
     if (verbose) {
         m_tft->fillScreen(BLACK);
         m_tft->setTextColor(WHITE);
@@ -67,10 +73,18 @@ bool MqttHandlers::connect(bool verbose) {
     if (!m_mqttClient->connect(clientID.c_str(),
                                m_settings->getSettings().mqtt.username.c_str(),
                                m_settings->getSettings().mqtt.password.c_str())) {
+        Serial.println("MQTT connect fail");
         if (verbose) {
             m_tft->print("FAIL");
             delay(1000);
         }
+
+        char err_buf[256];
+        Serial.print("failed, rc=");
+        Serial.println(m_mqttClient->state());
+        m_secureClient->getLastSSLError(err_buf, sizeof(err_buf));
+        Serial.print("SSL error: ");
+        Serial.println(err_buf);
 
         return false;
     }
@@ -122,7 +136,7 @@ void MqttHandlers::processReceivedMessage(char* topic, uint8_t* payload, unsigne
         return;
     
     String incomingMessage = "";
-    for (int i = 0; i < length; i++)
+    for (unsigned int i = 0; i < length; i++)
         incomingMessage += (char)payload[i];
     
     Serial.println("incomingMessage: " + incomingMessage);

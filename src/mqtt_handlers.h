@@ -30,6 +30,7 @@ class MqttHandlers {
         DataLogger *m_dataLogger;
         Storage *m_storage;
 
+        X509List *caCertX509;
         WiFiClientSecure *m_secureClient;
 
         PubSubClient *m_mqttClient;

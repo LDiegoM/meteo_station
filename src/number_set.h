@@ -66,13 +66,7 @@ E |   | C
 const uint8_t NSET_MARGIN_SIZE = 1;
 
 // Regex definition and test cases: https://regexr.com/6dlos
-const std::regex NSET_REG_EXPR[5] = {
-    std::regex("^[0-9]{2}:?[0-9]{2}$"),                                                                        // NS_HHMM: HHMM, HH:MM
-    std::regex("^[0-9]{4}$"),                                                                                  // NS_UINT: NNNN
-    std::regex("^-?[0-9]{4}$"),                                                                                // NS_SINT: -NNNN
-    std::regex("(^\\.?[0-9]{4}$)|(^[0-9]{1}\\.?[0-9]{3}$)|(^[0-9]{2}\\.?[0-9]{2}$)|(^[0-9]{3}\\.?[0-9]{1}$)"), // NS_UFLT: 1234, 12.34
-    std::regex("(^-?[0-9]{1}\\.?[0-9]{3}$)|(^-?[0-9]{2}\\.?[0-9]{2}$)|(^-?[0-9]{3}\\.?[0-9]{1}$)")             // NS_SFLT: -1234, -12.34, 12.34, 1234
-};
+extern const char* NSET_REG_EXPR[5];
 
 const uint8_t NSET_DIGITS[10][7] = {
 //   a  b  c  d  e  f  g

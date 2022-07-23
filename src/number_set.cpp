@@ -1,5 +1,13 @@
 #include <number_set.h>
 
+const char* NSET_REG_EXPR[5] = {
+    "^[0-9]{2}:?[0-9]{2}$",                                                                        // NS_HHMM: HHMM, HH:MM
+    "^[0-9]{4}$",                                                                                  // NS_UINT: NNNN
+    "^-?[0-9]{4}$",                                                                                // NS_SINT: -NNNN
+    "(^\\.?[0-9]{4}$)|(^[0-9]{1}\\.?[0-9]{3}$)|(^[0-9]{2}\\.?[0-9]{2}$)|(^[0-9]{3}\\.?[0-9]{1}$)", // NS_UFLT: 1234, 12.34
+    "(^-?[0-9]{1}\\.?[0-9]{3}$)|(^-?[0-9]{2}\\.?[0-9]{2}$)|(^-?[0-9]{3}\\.?[0-9]{1}$)"             // NS_SFLT: -1234, -12.34, 12.34, 1234
+};
+
 //////////////////// Constructor
 NumberSet::NumberSet(TFT_ILI9163C* tft, uint8_t x, uint8_t y, uint8_t format,
                      uint8_t size, uint16_t background, uint16_t fontColor) {
@@ -152,7 +160,7 @@ bool NumberSet::isValidNumber(String number) {
     if (number.length() < 4 || number.length() > 6)
         return false;
     
-    return std::regex_match(std::string(number.c_str()), NSET_REG_EXPR[this->m_format]);
+    return std::regex_match(std::string(number.c_str()), std::regex(NSET_REG_EXPR[this->m_format]));
 }
 
 bool NumberSet::charsChanged() {

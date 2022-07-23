@@ -10,6 +10,7 @@ class DateTime {
         String m_year, m_month, m_day, m_hour, m_minutes, m_seconds;
 
         void setValues();
+        bool ESP8266GetLocalTime(struct tm * info, uint32_t ms);
 
     public:
         DateTime();
