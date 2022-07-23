@@ -268,6 +268,8 @@ Payload:
 
 ## Unreleased
 
+- Fix MQTT reconnection using char* variable for certificate.
+
 ## 1.0.0 - 2022-06-27
 
 - Change storage to LittleFS, due to microSD is unstable.
