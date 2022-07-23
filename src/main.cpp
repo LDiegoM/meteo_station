@@ -51,7 +51,7 @@ DateTime *dateTime;
 Display *display;
 
 void setup(void) {
-    Serial.begin(115200);
+    Serial.begin(9600);
 
     tft = new TFT_ILI9163C(TFT_CS, TFT_DC);
     tft->begin();

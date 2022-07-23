@@ -25,7 +25,12 @@ bool MqttHandlers::begin() {
         return false;
 
     m_secureClient = new WiFiClientSecure();
+#ifdef ESP8266
+    X509List caCertX509(m_settings->getSettings().mqtt.ca_cert);
+    m_secureClient->setTrustAnchors(&caCertX509);
+#else
     m_secureClient->setCACert(m_settings->getSettings().mqtt.ca_cert);
+#endif
 
     m_mqttClient = new PubSubClient(*m_secureClient);
     m_mqttClient->setCallback(mqttMessageReceived);
@@ -122,7 +127,7 @@ void MqttHandlers::processReceivedMessage(char* topic, uint8_t* payload, unsigne
         return;
     
     String incomingMessage = "";
-    for (int i = 0; i < length; i++)
+    for (unsigned int i = 0; i < length; i++)
         incomingMessage += (char)payload[i];
     
     Serial.println("incomingMessage: " + incomingMessage);

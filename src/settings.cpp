@@ -60,7 +60,7 @@ void Settings::addWifiAP(const char* ssid, const char* password) {
 }
 
 bool Settings::updWifiAP(const char* ssid, const char* password) {
-    for (int i = 0; i < m_settings.wifiAPs.size(); i++) {
+    for (size_t i = 0; i < m_settings.wifiAPs.size(); i++) {
         if (m_settings.wifiAPs[i].ssid.equalsIgnoreCase(ssid)) {
             m_settings.wifiAPs[i].password = password;
             return true;
@@ -83,7 +83,7 @@ bool Settings::delWifiAP(const char* ssid){
 }
 
 bool Settings::ssidExists(String ssid) {
-    for (int i = 0; i < m_settings.wifiAPs.size(); i++) {
+    for (size_t i = 0; i < m_settings.wifiAPs.size(); i++) {
         if (m_settings.wifiAPs[i].ssid.equalsIgnoreCase(ssid))
             return true;
     }
@@ -162,7 +162,7 @@ bool Settings::readSettings() {
     m_settings.mqtt.ca_cert[cert.length()] = '\0';
 
     m_settings.wifiAPs.clear();
-    for (int i = 0; i < jsonObj["wifi"].size(); i++) {
+    for (size_t i = 0; i < jsonObj["wifi"].size(); i++) {
         wifiAP_t wifi;
         wifi.ssid = jsonObj["wifi"][i]["ssid"].as<String>();
         wifi.password = jsonObj["wifi"][i]["password"].as<String>();

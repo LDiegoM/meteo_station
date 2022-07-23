@@ -1,7 +1,14 @@
 #ifndef http_handlers_h
 #define http_handlers_h
 
+#ifdef ESP8266
+#include <ESP8266WebServer.h>
+#elif defined(ESP32)
 #include <WebServer.h>
+#else
+#error "Unsupported platform"
+#endif
+
 #include <ArduinoJson.h>
 
 #include <data_logger.h>
@@ -80,7 +87,11 @@ class HttpHandlers {
         WiFiConnection *m_wifi;
         Storage *m_storage;
         Settings *m_settings;
+#ifdef ESP8266
+        ESP8266WebServer *m_server;
+#elif defined(ESP32)
         WebServer *m_server;
+#endif
         DataLogger *m_dataLogger;
         Sensors *m_sensors;
         MqttHandlers *m_mqtt;

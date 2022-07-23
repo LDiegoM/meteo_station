@@ -5,7 +5,11 @@ WiFiConnection::WiFiConnection(Settings *settings, TFT_ILI9163C *tft) {
     m_settings = settings;
     m_tft = tft;
 
+#ifdef ESP8266
+    m_wifiMulti = new ESP8266WiFiMulti();
+#else
     m_wifiMulti = new WiFiMulti();
+#endif
 }
 
 //////////////////// Public methods implementation
@@ -13,7 +17,7 @@ bool WiFiConnection::begin() {
     if (!m_settings->isSettingsOK())
         return false;
 
-    for (int i = 0; i < m_settings->getSettings().wifiAPs.size(); i++) {
+    for (size_t i = 0; i < m_settings->getSettings().wifiAPs.size(); i++) {
         m_wifiMulti->addAP(m_settings->getSettings().wifiAPs[i].ssid.c_str(),
                            m_settings->getSettings().wifiAPs[i].password.c_str());
     }
