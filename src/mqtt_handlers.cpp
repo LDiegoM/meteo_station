@@ -1,6 +1,6 @@
 #include <mqtt_handlers.h>
 
-MQTT *mqtt = nullptr;
+MqttHandlers *mqtt = nullptr;
 
 //////////////////// MQTT Handlers
 void mqttMessageReceived(char* topic, uint8_t* payload, unsigned int length) {
@@ -8,7 +8,7 @@ void mqttMessageReceived(char* topic, uint8_t* payload, unsigned int length) {
 }
 
 //////////////////// Constructor
-MQTT::MQTT(WiFiConnection *wifi, Sensors *sensors, Settings *settings, TFT_ILI9163C *tft,
+MqttHandlers::MqttHandlers(WiFiConnection *wifi, Sensors *sensors, Settings *settings, TFT_ILI9163C *tft,
            DataLogger *dataLogger, Storage *storage) {
     m_wifi = wifi;
     m_sensors = sensors;
@@ -20,7 +20,7 @@ MQTT::MQTT(WiFiConnection *wifi, Sensors *sensors, Settings *settings, TFT_ILI91
 }
 
 //////////////////// Public methods implementation
-bool MQTT::begin() {
+bool MqttHandlers::begin() {
     if (!m_settings->isSettingsOK() || m_wifi->isModeAP())
         return false;
 
@@ -37,7 +37,7 @@ bool MQTT::begin() {
     return connect(true);
 }
 
-bool MQTT::connect(bool verbose) {
+bool MqttHandlers::connect(bool verbose) {
     m_connected = false;
     if (!m_settings->isSettingsOK() || m_wifi->isModeAP())
         return false;
@@ -88,11 +88,11 @@ bool MQTT::connect(bool verbose) {
     return true;
 }
 
-bool MQTT::isConnected() {
+bool MqttHandlers::isConnected() {
     return m_connected;
 }
 
-void MQTT::loop() {
+void MqttHandlers::loop() {
     if (!m_settings->isSettingsOK() || m_wifi->isModeAP())
         return;
 
@@ -116,7 +116,7 @@ void MQTT::loop() {
     }
 }
 
-void MQTT::processReceivedMessage(char* topic, uint8_t* payload, unsigned int length) {
+void MqttHandlers::processReceivedMessage(char* topic, uint8_t* payload, unsigned int length) {
     Serial.println("Message received from topic " + String(topic) + " - length: " + String(length));
     if (!String(topic).equals(MQTT_TOPIC_CMD))
         return;
@@ -172,7 +172,7 @@ void MQTT::processReceivedMessage(char* topic, uint8_t* payload, unsigned int le
 }
 
 //////////////////// Private methods implementation
-void MQTT::sendValuesToMQTT() {
+void MqttHandlers::sendValuesToMQTT() {
     if (!m_settings->isSettingsOK())
         return;
 
@@ -187,7 +187,7 @@ void MQTT::sendValuesToMQTT() {
     m_mqttClient->publish(MQTT_TOPIC_HUMI, String(m_sensors->humi()).c_str(), true);
 }
 
-String MQTT::commandToJSON() {
+String MqttHandlers::commandToJSON() {
     StaticJsonDocument<200> doc;
     doc["cmd"] = m_command.cmd;
     doc["value"] = m_command.value;
@@ -198,7 +198,7 @@ String MQTT::commandToJSON() {
     return json;
 }
 
-bool MQTT::jsonToCommand(String json) {
+bool MqttHandlers::jsonToCommand(String json) {
     StaticJsonDocument<200> doc;
     DeserializationError error = deserializeJson(doc, json.c_str());
     if (error) {

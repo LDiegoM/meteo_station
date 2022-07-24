@@ -269,6 +269,7 @@ Payload:
 ## Unreleased
 
 - Fix MQTT reconnection using char* variable for certificate.
+- Rename MqttHandlers class.
 
 ## 1.0.0 - 2022-06-27
 

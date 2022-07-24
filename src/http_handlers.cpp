@@ -83,7 +83,7 @@ void getAdmin() {
 
 //////////////////// Constructor
 HttpHandlers::HttpHandlers(WiFiConnection *wifi, Storage *storage, Settings *settings,
-                           DataLogger *dataLogger, Sensors *sensors, MQTT *mqtt) {
+                           DataLogger *dataLogger, Sensors *sensors, MqttHandlers *mqtt) {
     m_wifi = wifi;
     m_storage = storage;
     m_settings = settings;
