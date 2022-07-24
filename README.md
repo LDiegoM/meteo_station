@@ -101,9 +101,9 @@ Status resopnse table:
 
 | HTTP status code | Meaning |
 |---               |---      |
-|       500        | There was an internal error opening file at the device.|
-|       404        | Logs file wasn't found in SPIFFS memory. |
 |       200        | Logs file was successfully downloaded. |
+|       404        | Logs file wasn't found in SPIFFS memory. |
+|       500        | There was an internal error opening file at the device.|
 
 - DELETE `/logs`: Allow to completely delete current weather measures. It'll log a new measure at the deletion moment.
 
@@ -111,9 +111,9 @@ Status resopnse table:
 
 | HTTP status code | Meaning |
 |---               |---      |
-|       500        | There was an internal error deleting file at the device. |
-|       404        | Logs file wasn't found in SPIFFS memory. |
 |       204        | Logs file was successfully removed. |
+|       404        | Logs file wasn't found in SPIFFS memory. |
+|       500        | There was an internal error deleting file at the device. |
 
 - POST `/restart`: Restarts meteo_station.
 
@@ -127,8 +127,8 @@ Status resopnse table:
 
 | HTTP status code | Meaning |
 |---               |---      |
-|       404        | Settings file wasn't found in SPIFFS memory. |
 |       200        | Settings were successfully returned to client. |
+|       404        | Settings file wasn't found in SPIFFS memory. |
 
 Notice that the settings include MQTT and Wifi APs passwords as plain text. In future version it'll be encrypted.
 
@@ -146,9 +146,9 @@ Payload:
 
 | HTTP status code | Meaning |
 |---               |---      |
-|       500        | There was an internal error adding ap into settings. |
-|       400        | Invalid payload or AP ssid is empty, or AP ssid currently exists in APs list. |
 |       200        | AP was successfully added into settings. |
+|       400        | Invalid payload or AP ssid is empty, or AP ssid currently exists in APs list. |
+|       500        | There was an internal error adding ap into settings. |
 
 - PUT `/settings/wifi`: Updates one or more wifi AP into list. It's accessed by wifi settings HTML.
 
@@ -165,27 +165,21 @@ Payload:
 
 | HTTP status code | Meaning |
 |---               |---      |
-|       500        | There was an internal error updating ap into settings. |
+|       200        | APs were successfully updated into settings. |
 |       400        | Invalid payload or AP ssid is empty. |
 |       404        | AP ssid wasn't found in current APs list. |
-|       200        | APs were successfully updated into settings. |
+|       500        | There was an internal error updating ap into settings. |
 
 - DELETE `/settings/wifi`: Deletes an existing wifi AP from list. It's accessed by wifi settings HTML.
 
-Payload:
-```json
-{
-    "ap": "ap ssid",
-    "pw": "ap password"
-}
-```
+Expects ap ssid present as query parameter, as `ap` parameter.
 
 | HTTP status code | Meaning |
 |---               |---      |
-|       500        | There was an internal error deleting ap from settings. |
+|       200        | AP was successfully removed from settings. |
 |       400        | Invalid payload or AP ssid is empty. |
 |       404        | AP ssid wasn't found in current APs list. |
-|       200        | AP was successfully removed from settings. |
+|       500        | There was an internal error deleting ap from settings. |
 
 - GET `/settings/mqtt`: Returns HTML page that allows to configure MQTT client.
 
@@ -208,9 +202,9 @@ Payload:
 
 | HTTP status code | Meaning |
 |---               |---      |
-|       500        | There was an internal error updating settings. |
-|       400        | Invalid payload or invalid parameter. |
 |       200        | MQTT client configurations successfully updated. |
+|       400        | Invalid payload or invalid parameter. |
+|       500        | There was an internal error updating settings. |
 
 - GET `/settings/mqtt/cert`: Returns the MQTT client SSL certificate content.
 
@@ -227,9 +221,9 @@ Payload:
 
 | HTTP status code | Meaning |
 |---               |---      |
-|       500        | There was an internal error updating settings. |
-|       400        | Invalid payload or invalid parameter. |
 |       200        | Data Logger configurations successfully updated. |
+|       400        | Invalid payload or invalid parameter. |
+|       500        | There was an internal error updating settings. |
 
 - GET `/settings/date`: Returns HTML page that allows to configuration Date Time server.
 
@@ -246,17 +240,17 @@ Payload:
 
 | HTTP status code | Meaning |
 |---               |---      |
-|       500        | There was an internal error updating settings. |
-|       400        | Invalid payload or invalid parameter. |
 |       200        | Date Time configurations successfully updated. |
+|       400        | Invalid payload or invalid parameter. |
+|       500        | There was an internal error updating settings. |
 
 - DELETE `/settings`: Deletes current settings and restart meteo_station.
 
 | HTTP status code | Meaning |
 |---               |---      |
-|       500        | There was an internal error deleting settings file. |
-|       404        | Settings file wasn't found. |
 |       200        | Settings file was successfully removed. |
+|       404        | Settings file wasn't found. |
+|       500        | There was an internal error deleting settings file. |
 
 - GET `/admin`: Returns HTML page that allows to manage meteo_station.
 
@@ -270,6 +264,7 @@ Payload:
 
 - Fix MQTT reconnection using char* variable for certificate.
 - Rename MqttHandlers class.
+- Change HTTP Delete WiFi AP handler to receive ssid from URI.
 
 ## 1.0.0 - 2022-06-27
 
