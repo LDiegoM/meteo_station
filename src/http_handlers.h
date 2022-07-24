@@ -1,9 +1,3 @@
-/*
-    Example: https://github.com/zhouhan0126/WebServer-esp32/blob/master/examples/SDWebServer/SDWebServer.ino
-
-    To upload a file: https://tttapa.github.io/ESP8266/Chap12%20-%20Uploading%20to%20Server.html
-
-*/
 #ifndef http_handlers_h
 #define http_handlers_h
 
@@ -88,7 +82,7 @@ class HttpHandlers {
         WebServer *m_server;
         DataLogger *m_dataLogger;
         Sensors *m_sensors;
-        MQTT *m_mqtt;
+        MqttHandlers *m_mqtt;
 
         void defineRoutes();
 
@@ -115,7 +109,7 @@ class HttpHandlers {
 
     public:
         HttpHandlers(WiFiConnection *wifi, Storage *storage, Settings *settings,
-                     DataLogger *dataLogger, Sensors *sensors, MQTT *mqtt);
+                     DataLogger *dataLogger, Sensors *sensors, MqttHandlers *mqtt);
 
         bool begin();
         void loop();
