@@ -257,24 +257,18 @@ void HttpHandlers::handleUpdSettingsWiFi() {
     m_server->send(200, "text/plain", MSG_OK);
 }
 void HttpHandlers::handleDelSettingsWiFi() {
-    String body = m_server->arg("plain");
-    if (body.equals("")) {
+    String ssid = m_server->arg("ap");
+    if (ssid.equals("")) {
         m_server->send(400, "text/plain", ERR_WIFI_AP_IS_EMPTY);
         return;
     }
 
-    wifiAP_t newWiFiAP = parseWiFiBody(body);
-    if (newWiFiAP.ssid.equals("")) {
-        m_server->send(400, "text/plain", ERR_WIFI_AP_IS_EMPTY);
-        return;
-    }
-
-    if (!m_settings->ssidExists(newWiFiAP.ssid)) {
+    if (!m_settings->ssidExists(ssid)) {
         m_server->send(404, "text/plain", ERR_WIFI_AP_NOT_FOUND);
         return;
     }
 
-    m_settings->delWifiAP(newWiFiAP.ssid.c_str());
+    m_settings->delWifiAP(ssid.c_str());
     if (!m_settings->saveSettings()) {
         m_server->send(500, "text/plain", ERR_GENERIC);
         return;        
@@ -322,7 +316,7 @@ void HttpHandlers::handleUpdSettingsMQTT() {
     m_server->send(200, "text/plain", MSG_OK);
 }
 void HttpHandlers::handleGetSettingsMQTTCert() {
-    m_server->send(200, "text/html", m_settings->getSettings().mqtt.ca_cert);
+    m_server->send(200, "text/plain", m_settings->getSettings().mqtt.ca_cert);
 }
 
 void HttpHandlers::handleGetSettingsLogger() {
