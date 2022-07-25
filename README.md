@@ -24,42 +24,23 @@ Meteo station shows information in a 128x128 pixels display, in this format:
 
 ![Screen](./doc/Screen_design.png)
 
-# Application settings
+# Getting started
 
-To configure Meteo station write a json file in a SPIFFS memory. Below is an example of settings file.
+When meteo_station is running with an empty configuration, it'll not be able to connect to MQTT and date time services. To allow user to configure meteo_station, it creates a WiFi access point called `meteo_station`. You can connect to this WiFi network and access the next [link](http://192.168.4.1) to configure meteo_station.
 
-Path: `/settings/meteo_settings.json`
-```json
-{
-    "mqtt":{
-        "server": "your_mqtt_server_dns_address",
-        "port": 1234,
-        "username": "your_awesome_mqtt_service_username",
-        "password": "your_awesome_mqtt_service_password",
-        "crt_path": "/mqtt_ca_root.crt",
-        "send_period_seconds": 3600
-    },
-    "wifi":[
-        {
-            "ssid": "wifi_ap1_ssid",
-            "password": "wifi_ap1_password"
-        },
-        {
-            "ssid": "wifi_ap2_ssid",
-            "password": "wifi_ap2_password"
-        }
-    ],
-    "data_logger":{
-        "output_path": "/logs/meteo_data.txt",
-        "write_period_seconds": 1800
-    },
-    "date_time":{
-        "server": "pool.ntp.org",
-        "gmt_offset": -3,
-        "daylight_offset": 0
-    }
-}
-```
+After this, when meteo_station is running connected to a WiFi network and MQTT services, then you can configure it accessing to `http://meteo_station_ip_address/`.
+
+# MQTT service
+
+I choose [Hime MQ](https://www.hivemq.com/) MQTT service for testing porpuses. [Here](./doc/mqtt_ca_root.crt) you'll find the root ca certificate sor a secure connection to this service.
+
+# MQTT monitoring
+
+For monitoring porpuses I configured a complet IoT dashboard using [Iot MQTT Panel](https://play.google.com/store/apps/details?id=snr.lab.iotmqttpanel.prod) application for Android.
+
+[Here](./doc/IoTMQTTPanel.json) is a JSON file to import in IoT MQTT Panel application to built the default dashboards.
+
+# Configurating and managing using MQTT queues
 
 Meteo station listens from the topic `topic-meteo-cmd` to receive different commands using the following json format:
 ```json
@@ -79,180 +60,11 @@ Theese are the available commands:
 - `SET_AP_PASS`: value field should be the password of the wifi AP to add to settings. The application will publish `OK` or `ERROR: message` to the topic `topic-meteo-res-ap-pass`. Password could be empty.
 - `SET_AP_SAVE`: value field doesn't matters. The application will save the new wifi AP with given ssid and password using `SET_AP_SSID` and `SET_AP_PASS` commands, and publish `OK` or `ERROR: message` to the topic `topic-meteo-res-ap-save`.
 
-# MQTT service
+# Configuration and management API Endpoints
 
-I choose [Hime MQ](https://www.hivemq.com/) MQTT service for testing porpuses. [Here](./doc/mqtt_ca_root.crt) you'll find the root ca certificate sor a secure connection to this service.
+Meteo station implements API endpoints to allow configuration and management, listening in port 80.
 
-# MQTT monitoring
-
-For monitoring porpuses I configured a complet IoT dashboard using [Iot MQTT Panel](https://play.google.com/store/apps/details?id=snr.lab.iotmqttpanel.prod) application for Android.
-
-[Here](./doc/IoTMQTTPanel.json) I let a JSON file to import in IoT MQTT Panel application to built the default dashboards.
-
-# API Endpoints
-
-Meteo station implements the following API endpoints, listening in port 80:
-
-- GET `/`: Returns HTML page with meteo_station current status.
-
-- GET `/logs`: Downloads a file named `meteo_logs.txt` with all recorded weather measures.
-
-Status resopnse table:
-
-| HTTP status code | Meaning |
-|---               |---      |
-|       200        | Logs file was successfully downloaded. |
-|       404        | Logs file wasn't found in SPIFFS memory. |
-|       500        | There was an internal error opening file at the device.|
-
-- DELETE `/logs`: Allow to completely delete current weather measures. It'll log a new measure at the deletion moment.
-
-Status resopnse table:
-
-| HTTP status code | Meaning |
-|---               |---      |
-|       204        | Logs file was successfully removed. |
-|       404        | Logs file wasn't found in SPIFFS memory. |
-|       500        | There was an internal error deleting file at the device. |
-
-- POST `/restart`: Restarts meteo_station.
-
-| HTTP status code | Meaning |
-|---               |---      |
-|       200        | meteo_station was succesfully restarted. |
-
-- GET `/settings`: Returns current settings as they're written in setings file in the response body.
-
-Status resopnse table:
-
-| HTTP status code | Meaning |
-|---               |---      |
-|       200        | Settings were successfully returned to client. |
-|       404        | Settings file wasn't found in SPIFFS memory. |
-
-Notice that the settings include MQTT and Wifi APs passwords as plain text. In future version it'll be encrypted.
-
-- GET `/settings/wifi`: Returns HTML page that allows a CRUD access to wifi configuration.
-
-- POST `/settings/wifi`: Adds a new wifi AP to list. It's accessed by wifi settings HTML.
-
-Payload:
-```json
-{
-    "ap": "ap ssid",
-    "pw": "ap password"
-}
-```
-
-| HTTP status code | Meaning |
-|---               |---      |
-|       200        | AP was successfully added into settings. |
-|       400        | Invalid payload or AP ssid is empty, or AP ssid currently exists in APs list. |
-|       500        | There was an internal error adding ap into settings. |
-
-- PUT `/settings/wifi`: Updates one or more wifi AP into list. It's accessed by wifi settings HTML.
-
-```json
-{
-    "aps": [
-        {
-            "ap": "ap ssid",
-            "pw": "ap password"
-        }
-    ]
-}
-```
-
-| HTTP status code | Meaning |
-|---               |---      |
-|       200        | APs were successfully updated into settings. |
-|       400        | Invalid payload or AP ssid is empty. |
-|       404        | AP ssid wasn't found in current APs list. |
-|       500        | There was an internal error updating ap into settings. |
-
-- DELETE `/settings/wifi`: Deletes an existing wifi AP from list. It's accessed by wifi settings HTML.
-
-Expects ap ssid present as query parameter, as `ap` parameter.
-
-| HTTP status code | Meaning |
-|---               |---      |
-|       200        | AP was successfully removed from settings. |
-|       400        | Invalid payload or AP ssid is empty. |
-|       404        | AP ssid wasn't found in current APs list. |
-|       500        | There was an internal error deleting ap from settings. |
-
-- GET `/settings/mqtt`: Returns HTML page that allows to configure MQTT client.
-
-- PUT `/settings/mqtt`: Update MQTT client configurations.
-
-Payload:
-```json
-{
-    "server": "server-address",
-    "user": "your-mqtt-broker-username",
-    "pw": "your-mqtt-broker-password",
-    "port": 0,
-    "send_period": 0,
-    "cert": [
-        "cert-line-1",
-        "cert-line-2"
-    ]
-}
-```
-
-| HTTP status code | Meaning |
-|---               |---      |
-|       200        | MQTT client configurations successfully updated. |
-|       400        | Invalid payload or invalid parameter. |
-|       500        | There was an internal error updating settings. |
-
-- GET `/settings/mqtt/cert`: Returns the MQTT client SSL certificate content.
-
-- GET `/settings/logger`: Returns HTML page that allows to configuration Data Logger.
-
-- PUT `/settings/logger`: Update Data Logger configurations.
-
-Payload:
-```json
-{
-    "write_period": 0
-}
-```
-
-| HTTP status code | Meaning |
-|---               |---      |
-|       200        | Data Logger configurations successfully updated. |
-|       400        | Invalid payload or invalid parameter. |
-|       500        | There was an internal error updating settings. |
-
-- GET `/settings/date`: Returns HTML page that allows to configuration Date Time server.
-
-- PUT `/settings/date`: Update Date Time configurations.
-
-Payload:
-```json
-{
-    "server": "server-address",
-    "gmt_offset": 0,
-    "daylight_offset": 0
-}
-```
-
-| HTTP status code | Meaning |
-|---               |---      |
-|       200        | Date Time configurations successfully updated. |
-|       400        | Invalid payload or invalid parameter. |
-|       500        | There was an internal error updating settings. |
-
-- DELETE `/settings`: Deletes current settings and restart meteo_station.
-
-| HTTP status code | Meaning |
-|---               |---      |
-|       200        | Settings file was successfully removed. |
-|       404        | Settings file wasn't found. |
-|       500        | There was an internal error deleting settings file. |
-
-- GET `/admin`: Returns HTML page that allows to manage meteo_station.
+[Here](https://app.swaggerhub.com/apis-docs/LDiegoM/meteo_station/1.0.0) is the Open API Documentation.
 
 # Author
 
@@ -265,6 +77,7 @@ Payload:
 - Fix MQTT reconnection using char* variable for certificate.
 - Rename MqttHandlers class.
 - Change HTTP Delete WiFi AP handler to receive ssid from URI.
+- Add OpenAPI documentation.
 
 ## 1.0.0 - 2022-06-27
 
