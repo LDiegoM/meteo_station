@@ -66,6 +66,10 @@ Meteo station implements API endpoints to allow configuration and management, li
 
 [Here](https://app.swaggerhub.com/apis-docs/LDiegoM/meteo_station/1.0.0) is the Open API Documentation.
 
+# License
+
+Meteo_station is an open source project by Diego M. Lopez that is licensed under [MIT](https://opensource.org/licenses/MIT). Diego M. Lopez reserves the right to change the license of future releases.
+
 # Author
 
 - Main idea, development and functional prototype by Diego M. Lopez (ldiegom@gmail.com)

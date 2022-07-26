@@ -1,3 +1,10 @@
+/*
+    meteo_station
+    Author: Diego M. Lopez
+    License: Open source - MIT (https://opensource.org/licenses/MIT)
+
+    Diego M. Lopez - 2021 (ldiegom@gmail.com)
+*/
 #include <Arduino.h>
 #include <Adafruit_GFX.h>
 #include <TFT_ILI9163C.h>
