@@ -30,6 +30,7 @@ When meteo_station is running with an empty configuration, it'll not be able to 
 
 After this, when meteo_station is running connected to a WiFi network and MQTT services, then you can configure it accessing to `http://meteo_station_ip_address/`.
 
+![Status](./doc/html_status.jpg) ![Administration](./doc/html_admin.jpg)
 # MQTT service
 
 I choose [Hime MQ](https://www.hivemq.com/) MQTT service for testing porpuses. [Here](./doc/mqtt_ca_root.crt) you'll find the root ca certificate sor a secure connection to this service.
@@ -39,6 +40,8 @@ I choose [Hime MQ](https://www.hivemq.com/) MQTT service for testing porpuses. [
 For monitoring porpuses I configured a complet IoT dashboard using [Iot MQTT Panel](https://play.google.com/store/apps/details?id=snr.lab.iotmqttpanel.prod) application for Android.
 
 [Here](./doc/IoTMQTTPanel.json) is a JSON file to import in IoT MQTT Panel application to built the default dashboards.
+
+![Dashboard](./doc/IoTMQTTPanel_dashboard.jpg) ![Settings](./doc/IoTMQTTPanel_settings.jpg)
 
 # Configurating and managing using MQTT queues
 
