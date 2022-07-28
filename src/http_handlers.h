@@ -27,7 +27,9 @@ struct settings_date_t {
 void downloadLogs();
 void deleteLogs();
 void restart();
+void getMeasures();
 void getSettings();
+void delSettings();
 
 void getBootstrapCSS();
 void getBootstrapJS();
@@ -50,8 +52,6 @@ void updSettingsLogger();
 void getSettingsDate();
 void updSettingsDate();
 
-void delSettings();
-
 void getAdmin();
 
 class HttpHandlers {
@@ -66,6 +66,7 @@ class HttpHandlers {
 
         const char* MSG_OK = "ok";
         const char* ERR_GENERIC = "Error saving settings. Please try again";
+        const char* ERR_INVALID_Q = "Invalid q parameter. Accepted values: temp/pres/humi";
         const char* ERR_WIFI_AP_NOT_FOUND = "AP ssid not found";
         const char* ERR_WIFI_AP_IS_EMPTY = "AP ssid can't be empty";
         const char* ERR_WIFI_AP_EXISTS = "There's already an AP with the same SSID";
@@ -118,7 +119,9 @@ class HttpHandlers {
         void handleDownloadLogs();
         bool handleDeleteLogs();
         void handleRestart();
+        void handleGetMeasures();
         void handleGetSettings();
+        void handleDelSettings();
 
         void handleGetBootstrapCSS();
         void handleGetBootstrapJS();
@@ -140,8 +143,6 @@ class HttpHandlers {
 
         void handleGetSettingsDate();
         void handleUpdSettingsDate();
-
-        void handleDelSettings();
 
         void handleGetAdmin();
 };
