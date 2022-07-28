@@ -6,28 +6,29 @@ HttpHandlers *httpHandlers = nullptr;
 void downloadLogs(void) {
     httpHandlers->handleDownloadLogs();
 }
-
 void deleteLogs(void) {
     if (httpHandlers->handleDeleteLogs())
         dataLogger->logData();
 }
-
 void restart() {
     httpHandlers->handleRestart();
 }
-
+void getMeasures() {
+    httpHandlers->handleGetMeasures();
+}
 void getSettings() {
     httpHandlers->handleGetSettings();
+}
+void delSettings() {
+    httpHandlers->handleDelSettings();
 }
 
 void getBootstrapCSS() {
     httpHandlers->handleGetBootstrapCSS();
 }
-
 void getBootstrapJS() {
     httpHandlers->handleGetBootstrapJS();
 }
-
 void getNotFound() {
     httpHandlers->handleGetNotFound();
 }
@@ -71,10 +72,6 @@ void getSettingsDate() {
 }
 void updSettingsDate() {
     httpHandlers->handleUpdSettingsDate();
-}
-
-void delSettings() {
-    httpHandlers->handleDelSettings();
 }
 
 void getAdmin() {
@@ -132,7 +129,6 @@ void HttpHandlers::handleDownloadLogs() {
     
     file.close();
 }
-
 bool HttpHandlers::handleDeleteLogs() {
     Serial.println("Starting logs delete");
     if (!m_storage->exists(m_settings->getSettings().logger.outputPath.c_str())) {
@@ -149,12 +145,33 @@ bool HttpHandlers::handleDeleteLogs() {
     
     return flgOK;
 }
-
 void HttpHandlers::handleRestart() {
     m_server->send(200, "text/plain", MSG_OK);
     ESP.restart();
 }
+void HttpHandlers::handleGetMeasures() {
+    String q = m_server->arg("q");
+    StaticJsonDocument<1024> doc;
 
+    if (!q.equals("") && !q.equals("temp") && !q.equals("pres") && !q.equals("humi")) {
+        m_server->send(400, "text/plain", ERR_INVALID_Q);
+        return;
+    }
+
+    if (q.equals("") || q.equals("temp"))
+        doc["temp"] = String(m_sensors->temp());
+
+    if (q.equals("") || q.equals("pres"))
+        doc["pres"] = String(m_sensors->pres());
+
+    if (q.equals("") || q.equals("humi"))
+        doc["humi"] = String(m_sensors->humi());
+
+    String json;
+    serializeJsonPretty(doc, json);
+
+    m_server->send(200, "application/json", json);
+}
 void HttpHandlers::handleGetSettings() {
     if (!m_storage->exists(SETTINGS_FILE)) {
         m_server->send(404, "text/plain", "not found");
@@ -162,6 +179,19 @@ void HttpHandlers::handleGetSettings() {
     }
 
     m_server->send(200, "application/json", m_storage->readAll(SETTINGS_FILE));
+}
+void HttpHandlers::handleDelSettings() {
+    if (!m_storage->exists(SETTINGS_FILE)) {
+        m_server->send(404, "text/plain", "not found");
+        return;
+    }
+
+    if (!m_storage->remove(SETTINGS_FILE)) {
+        m_server->send(500, "text/plain", ERR_GENERIC);
+        return;        
+    }
+
+    handleRestart();
 }
 
 void HttpHandlers::handleGetBootstrapCSS() {
@@ -173,7 +203,6 @@ void HttpHandlers::handleGetBootstrapCSS() {
     m_server->streamFile(file, "text/css");
     file.close();
 }
-
 void HttpHandlers::handleGetBootstrapJS() {
     File file = LittleFS.open("/wwwroot/bootstrap.bundle.min.js.gz");
     if (!file) {
@@ -183,7 +212,6 @@ void HttpHandlers::handleGetBootstrapJS() {
     m_server->streamFile(file, "text/js");
     file.close();
 }
-
 void HttpHandlers::handleGetNotFound() {
     String html = m_storage->readAll("/wwwroot/error.html");
     html.replace("{error_description}", "Resource not found");
@@ -377,20 +405,6 @@ void HttpHandlers::handleUpdSettingsDate() {
     m_server->send(200, "text/plain", MSG_OK);
 }
 
-void HttpHandlers::handleDelSettings() {
-    if (!m_storage->exists(SETTINGS_FILE)) {
-        m_server->send(404, "text/plain", "not found");
-        return;
-    }
-
-    if (!m_storage->remove(SETTINGS_FILE)) {
-        m_server->send(500, "text/plain", ERR_GENERIC);
-        return;        
-    }
-
-    handleRestart();
-}
-
 void HttpHandlers::handleGetAdmin() {
     String html = getHeaderHTML("admin");
     html += getAdminHTML();
@@ -405,9 +419,9 @@ void HttpHandlers::defineRoutes() {
     m_server->on("/logs", HTTP_GET, downloadLogs);
     m_server->on("/logs", HTTP_DELETE, deleteLogs);
     m_server->on("/restart", HTTP_POST, restart);
-
-    // TODO: When wifi settings is fully implemented, redirect to wifi settings handler.
+    m_server->on("/measures", HTTP_GET, getMeasures);
     m_server->on("/settings", HTTP_GET, getSettings);
+    m_server->on("/settings", HTTP_DELETE, delSettings);
 
     m_server->on("/bootstrap.min.css", HTTP_GET, getBootstrapCSS);
     m_server->on("/bootstrap.bundle.min.js", HTTP_GET, getBootstrapJS);
@@ -426,8 +440,6 @@ void HttpHandlers::defineRoutes() {
 
     m_server->on("/settings/date", HTTP_GET, getSettingsDate);
     m_server->on("/settings/date", HTTP_PUT, updSettingsDate);
-
-    m_server->on("/settings", HTTP_DELETE, delSettings);
 
     m_server->on("/admin", HTTP_GET, getAdmin);
 

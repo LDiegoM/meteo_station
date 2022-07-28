@@ -224,6 +224,40 @@ paths:
         '500':
           $ref: '#/components/responses/500'
       summary: Deletes current configurations and restarts meteo_station
+  /measures:
+    get:
+      parameters:
+        - examples:
+            All measures:
+              value: ''
+            Return only temperature:
+              value: temp
+            Return only pressure:
+              value: pres
+            Return only humidity:
+              value: humi
+          name: q
+          description: Allows to obtain all measures (empty), or just one (temp/pres/humi)
+          schema:
+            type: string
+          in: query
+          required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/measures'
+              examples:
+                body:
+                  value:
+                    temp: '25.00'
+                    pres: '1006.93'
+                    humi: '47.00'
+          description: Returns current measures
+        '400':
+          $ref: '#/components/responses/400'
+      summary: Returns current measures
 components:
   schemas:
     AP:
@@ -326,6 +360,21 @@ components:
         server: server-address
         gmt_offset: 0
         daylight_offset: 0
+    measures:
+      title: Root Type for measures
+      description: Current measures
+      type: object
+      properties:
+        temp:
+          type: string
+        pres:
+          type: string
+        humi:
+          type: string
+      example:
+        temp: '25.00'
+        pres: '1006.93'
+        humi: '47.00'
   responses:
     '400':
       content:

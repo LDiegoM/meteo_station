@@ -84,7 +84,7 @@ Meteo_station is an open source project by Diego M. Lopez that is licensed under
 - Fix MQTT reconnection using char* variable for certificate.
 - Rename MqttHandlers class.
 - Change HTTP Delete WiFi AP handler to receive ssid from URI.
-- Add OpenAPI documentation.
+- Add /measures endpoint to get current measures.
 
 ## 1.0.0 - 2022-06-27
 
@@ -110,31 +110,19 @@ Meteo_station is an open source project by Diego M. Lopez that is licensed under
 
 - Add capability to get current log file size from MQTT.
 - Remove ArduinoJson and DHT Sensor from stored libraries.
-
-## 0.0.7 - 2022-05-10
-
 - Update dependencies and remove from stored libs
 - Fix date-time configuration
 
 ## 0.0.6 - 2022-04-27
 
 - Add http endpoints to download and delete meteo_logs and get settings.
-
-## 0.0.5 - 2022-04-26
-
 - Log weather measures to SD card.
 - Add data log monitoring command to MQTT subscriber.
-
-## 0.0.4 - 2022-04-15
-
 - Add commands to return local IP and create new wifi AP.
 
 ## 0.0.3 - 2022-04-14
 
 - Refactor mqtt and wifi abstractions.
-
-## 0.0.2 - 2022-04-14
-
 - Add feature to create new wifi AP in settings and save it.
 
 ## 0.0.1 - 2022-04-11
