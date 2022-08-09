@@ -47,13 +47,11 @@ String DataLogger::getLogData() {
 }
 
 bool DataLogger::writeData() {
-    String logTime = "";
-    if (m_dateTime->refresh()) {
-        logTime = m_dateTime->toString() + "\t";
-    } else {
+    if (!m_dateTime->refresh()) {
         return false;
     }
 
+    String logTime = m_dateTime->toString() + "\t";
     String fullData = logTime + getLogData();
     Serial.print("log: " + fullData);
 
