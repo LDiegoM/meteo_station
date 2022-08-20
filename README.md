@@ -86,6 +86,7 @@ Meteo_station is an open source project by Diego M. Lopez that is licensed under
 - Change HTTP Delete WiFi AP handler to receive ssid from URI.
 - Add /measures endpoint to get current measures.
 - Fix appendFile function to detect if file didn't chang.
+- Update dependencies.
 
 ## 1.0.0 - 2022-06-27
 
