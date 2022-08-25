@@ -79,11 +79,10 @@ bool MqttHandlers::connect(bool verbose) {
     m_connected = true;
 
     if (verbose) {
+        sendValuesToMQTT();
         m_tft->print("OK");
         delay(1000);
     }
-
-    sendValuesToMQTT();
 
     return true;
 }
@@ -97,6 +96,8 @@ void MqttHandlers::loop() {
         return;
 
     if (!m_mqttClient->connected()) {
+        m_connected = false;
+
         if (!m_tmrConnectMQTT->isRunning()) {
             m_tmrConnectMQTT->start();
         }
@@ -106,14 +107,16 @@ void MqttHandlers::loop() {
             if (!connect(false)) {
                 return;
             }
+        } else {
+            return;
         }
-    } else {
-        if (m_tmrSendValuesToMQTT->isTime()) {
-            sendValuesToMQTT();
-        }
-
-        m_mqttClient->loop();
     }
+
+    if (m_tmrSendValuesToMQTT->isTime()) {
+        sendValuesToMQTT();
+    }
+
+    m_mqttClient->loop();
 }
 
 void MqttHandlers::processReceivedMessage(char* topic, uint8_t* payload, unsigned int length) {
