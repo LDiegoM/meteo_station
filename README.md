@@ -87,6 +87,7 @@ Meteo_station is an open source project by Diego M. Lopez that is licensed under
 - Add /measures endpoint to get current measures.
 - Fix appendFile function to detect if file didn't chang.
 - Update dependencies.
+- Change MQTT connect method to send messages only on init.
 
 ## 1.0.0 - 2022-06-27
 
