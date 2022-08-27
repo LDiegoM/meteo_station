@@ -14,7 +14,7 @@ struct settings_t {
     struct mqtt {
         String server, username, password, caCertPath;
         uint16_t port, sendPeriod;
-        String ca_cert;
+        char *ca_cert;
     } mqtt;
     std::vector<wifiAP_t> wifiAPs;
     struct logger {

@@ -70,11 +70,17 @@ bool Storage::appendFile(const char *path, const char *message) {
     }
     delay(100);
 
+    size_t prevSize = file.size();
+
     bool flgOk = false;
     if (file.print(message) > 0)
         flgOk = true;
 
     file.close();
+
+    size_t newSize = fileSize(path);
+    if (prevSize == newSize)
+        flgOk = false;
 
     return flgOk;
 }

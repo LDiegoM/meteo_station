@@ -4,8 +4,8 @@
     Diego M. Lopez - 2021 (ldiegom@gmail.com)
 */
 
-#ifndef mqtt_h
-#define mqtt_h
+#ifndef mqtt_handlers_h
+#define mqtt_handlers_h
 
 #include <TFT_ILI9163C.h>
 #include <wifi_connection.h>
@@ -21,7 +21,7 @@
 //////////////////// MQTT Handlers
 void mqttMessageReceived(char* topic, uint8_t* payload, unsigned int length);
 
-class MQTT {
+class MqttHandlers {
     private:
         WiFiConnection *m_wifi;
         Sensors *m_sensors;
@@ -62,7 +62,7 @@ class MQTT {
         bool jsonToCommand(String json);
 
     public:
-        MQTT(WiFiConnection *wifi, Sensors *sensors, Settings *settings, TFT_ILI9163C *tft,
+        MqttHandlers(WiFiConnection *wifi, Sensors *sensors, Settings *settings, TFT_ILI9163C *tft,
              DataLogger *dataLogger, Storage *storage);
         
         bool begin();
@@ -72,6 +72,6 @@ class MQTT {
         void processReceivedMessage(char* topic, uint8_t* payload, unsigned int length);
 };
 
-extern MQTT *mqtt;
+extern MqttHandlers *mqtt;
 
 #endif

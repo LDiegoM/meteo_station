@@ -1,0 +1,405 @@
+openapi: 3.0.2
+info:
+  title: meteo_station
+  version: 1.0.0
+  description: Meteo station configuration and management API
+servers:
+  - url: http://192.168.4.1
+    description: access point IP 192.168.4.1
+paths:
+  /logs:
+    summary: Operate with current measures log file
+    get:
+      responses:
+        '200':
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+              examples:
+                Content-Disposition:
+                  value: inline; filename=meteo_logs.txt
+          description: Download current measures log file
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      summary: Download current measures log file
+    delete:
+      responses:
+        '204':
+          description: Measures log file was successfully deleted
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      summary: Delete current measures log file and create a new one with current measures
+  /restart:
+    summary: Restarts meteo_station
+    post:
+      responses:
+        '200':
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                body:
+                  value: ok
+          description: Meteo station was successfully restarted
+      summary: Restarts meteo_station
+  /settings/wifi:
+    put:
+      requestBody:
+        description: A valid AP data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/APs'
+        required: true
+      responses:
+        '200':
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                body:
+                  value: ok
+          description: AP was successfully updated
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      summary: Allows to update one or many existing access points
+    post:
+      requestBody:
+        description: A valid AP data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AP'
+        required: true
+      responses:
+        '200':
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                body:
+                  value: ok
+          description: AP was successfully added
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+      summary: Allows to add a new access point
+    delete:
+      parameters:
+        - examples:
+            ap:
+              value: ap ssid
+          name: ap
+          description: ap ssid
+          schema:
+            type: string
+          in: query
+          required: true
+      responses:
+        '200':
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                body:
+                  value: ok
+          description: AP was successfully removed
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      summary: Allows to delete an existing access point
+  /settings/mqtt:
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mqtt_settings'
+        required: true
+      responses:
+        '200':
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                body:
+                  value: ok
+          description: MQTT configuration was successfully updated
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+      summary: Allows to update MQTT configuration
+  /settings/mqtt/cert:
+    get:
+      responses:
+        '200':
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                body:
+                  value: "-----BEGIN CERTIFICATE-----\r\n\r\n-----END CERTIFICATE-----"
+          description: Returns current SSL certificate in plain text format
+      summary: Allows to obtain current MQTT server SSL certificate
+  /settings/logger:
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/data_logger_settings'
+        required: true
+      responses:
+        '200':
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                body:
+                  value: ok
+          description: Data Logger configuration was successfully updated
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+      summary: Allows to update Data Logger configuration
+  /settings/date:
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/date_time_settings'
+        required: true
+      responses:
+        '200':
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                body:
+                  value: ok
+          description: Date Time service configuration was successfully updated
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+      summary: Allows to update Date Time service configuration
+  /settings:
+    delete:
+      responses:
+        '200':
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                body:
+                  value: ok
+          description: Configuration was successfully removed and meteo_station is restarting
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      summary: Deletes current configurations and restarts meteo_station
+  /measures:
+    get:
+      parameters:
+        - examples:
+            All measures:
+              value: ''
+            Return only temperature:
+              value: temp
+            Return only pressure:
+              value: pres
+            Return only humidity:
+              value: humi
+          name: q
+          description: Allows to obtain all measures (empty), or just one (temp/pres/humi)
+          schema:
+            type: string
+          in: query
+          required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/measures'
+              examples:
+                body:
+                  value:
+                    temp: '25.00'
+                    pres: '1006.93'
+                    humi: '47.00'
+          description: Returns current measures
+        '400':
+          $ref: '#/components/responses/400'
+      summary: Returns current measures
+components:
+  schemas:
+    AP:
+      title: Root Type for AP
+      description: Full access point definition
+      required:
+        - ap
+        - pw
+      type: object
+      properties:
+        ap:
+          type: string
+          example: ap ssid
+        pw:
+          type: string
+          example: ap password
+      example:
+        ap: ap ssid
+        pw: ap password
+    APs:
+      title: Root Type for APs
+      description: Array of access point definitions
+      required:
+        - aps
+      type: object
+      properties:
+        aps:
+          type: array
+          items:
+            $ref: '#/components/schemas/AP'
+          example: "{\r\n    \"ap\": \"ap ssid\",\r\n    \"pw\": \"ap password\"\r\n}"
+      example:
+        aps:
+          - ap: ap ssid
+            pw: ap password
+    mqtt_settings:
+      title: Root Type for mqtt_settings
+      description: Full MQTT configuration
+      required:
+        - user
+        - server
+        - send_period
+        - pw
+        - port
+      type: object
+      properties:
+        server:
+          type: string
+        user:
+          type: string
+        pw:
+          type: string
+        port:
+          format: int32
+          type: integer
+        send_period:
+          format: int32
+          type: integer
+        cert:
+          type: array
+          items:
+            type: string
+      example:
+        server: server-address
+        user: your-mqtt-broker-username
+        pw: your-mqtt-broker-password
+        port: 0
+        send_period: 0
+        cert:
+          - cert-line-1
+          - cert-line-2
+    data_logger_settings:
+      description: Full Data Logger configuration
+      required:
+        - write_period
+      type: object
+      properties:
+        write_period:
+          description: ''
+          type: integer
+          example: ''
+      example:
+        write_period: 0
+    date_time_settings:
+      title: Root Type for date_time_settings
+      description: Full Date Time service configuration
+      required:
+        - server
+      type: object
+      properties:
+        server:
+          type: string
+        gmt_offset:
+          format: int32
+          type: integer
+        daylight_offset:
+          format: int32
+          type: integer
+      example:
+        server: server-address
+        gmt_offset: 0
+        daylight_offset: 0
+    measures:
+      title: Root Type for measures
+      description: Current measures
+      type: object
+      properties:
+        temp:
+          type: string
+        pres:
+          type: string
+        humi:
+          type: string
+      example:
+        temp: '25.00'
+        pres: '1006.93'
+        humi: '47.00'
+  responses:
+    '400':
+      content:
+        text/plain:
+          schema:
+            type: string
+          examples:
+            body:
+              value: some missing parameter
+      description: bad request
+    '404':
+      content:
+        text/plain:
+          schema:
+            type: string
+          examples:
+            body:
+              value: not found
+      description: not found
+    '500':
+      content:
+        text/plain:
+          schema:
+            type: string
+          examples:
+            body:
+              value: some error message
+      description: internal server error

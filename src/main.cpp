@@ -1,3 +1,10 @@
+/*
+    meteo_station
+    Author: Diego M. Lopez
+    License: Open source - MIT (https://opensource.org/licenses/MIT)
+
+    Diego M. Lopez - 2021 (ldiegom@gmail.com)
+*/
 #include <Arduino.h>
 #include <Adafruit_GFX.h>
 #include <TFT_ILI9163C.h>
@@ -88,7 +95,7 @@ void setup(void) {
     dataLogger = new DataLogger(sensors, dateTime, storage, config.logger.outputPath, config.logger.writePeriod);
     dataLogger->logData();
 
-    mqtt = new MQTT(wifi, sensors, settings, tft, dataLogger, storage);
+    mqtt = new MqttHandlers(wifi, sensors, settings, tft, dataLogger, storage);
     if (!mqtt->begin())
         Serial.println("MQTT is not connected");
 

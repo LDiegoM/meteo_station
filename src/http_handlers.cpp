@@ -6,28 +6,29 @@ HttpHandlers *httpHandlers = nullptr;
 void downloadLogs(void) {
     httpHandlers->handleDownloadLogs();
 }
-
 void deleteLogs(void) {
     if (httpHandlers->handleDeleteLogs())
         dataLogger->logData();
 }
-
 void restart() {
     httpHandlers->handleRestart();
 }
-
+void getMeasures() {
+    httpHandlers->handleGetMeasures();
+}
 void getSettings() {
     httpHandlers->handleGetSettings();
+}
+void delSettings() {
+    httpHandlers->handleDelSettings();
 }
 
 void getBootstrapCSS() {
     httpHandlers->handleGetBootstrapCSS();
 }
-
 void getBootstrapJS() {
     httpHandlers->handleGetBootstrapJS();
 }
-
 void getNotFound() {
     httpHandlers->handleGetNotFound();
 }
@@ -73,17 +74,13 @@ void updSettingsDate() {
     httpHandlers->handleUpdSettingsDate();
 }
 
-void delSettings() {
-    httpHandlers->handleDelSettings();
-}
-
 void getAdmin() {
     httpHandlers->handleGetAdmin();
 }
 
 //////////////////// Constructor
 HttpHandlers::HttpHandlers(WiFiConnection *wifi, Storage *storage, Settings *settings,
-                           DataLogger *dataLogger, Sensors *sensors, MQTT *mqtt) {
+                           DataLogger *dataLogger, Sensors *sensors, MqttHandlers *mqtt) {
     m_wifi = wifi;
     m_storage = storage;
     m_settings = settings;
@@ -112,13 +109,10 @@ void HttpHandlers::loop() {
 
 /////////// HTTP Handlers
 void HttpHandlers::handleDownloadLogs() {
-    Serial.println("Starting logs download");
     if (!m_storage->exists(m_settings->getSettings().logger.outputPath.c_str())) {
         m_server->send(404, "text/plain", "not found");
         return;
     }
-
-    Serial.println("File exists");
 
     File file = m_storage->open(m_settings->getSettings().logger.outputPath.c_str());
     if (!file) {
@@ -126,20 +120,15 @@ void HttpHandlers::handleDownloadLogs() {
         return;
     }
 
-    Serial.println("File opened - size: " + String(file.size()));
     String dataType = "application/octet-stream";
 
-    Serial.println("Sending header");
     m_server->sendHeader("Content-Disposition", "inline; filename=meteo_logs.txt");
 
-    Serial.println("Start file streaming");
     if (m_server->streamFile(file, dataType) != file.size())
         Serial.println("Sent different data length than expected");
     
-    Serial.println("File close");
     file.close();
 }
-
 bool HttpHandlers::handleDeleteLogs() {
     Serial.println("Starting logs delete");
     if (!m_storage->exists(m_settings->getSettings().logger.outputPath.c_str())) {
@@ -156,12 +145,33 @@ bool HttpHandlers::handleDeleteLogs() {
     
     return flgOK;
 }
-
 void HttpHandlers::handleRestart() {
     m_server->send(200, "text/plain", MSG_OK);
     ESP.restart();
 }
+void HttpHandlers::handleGetMeasures() {
+    String q = m_server->arg("q");
+    StaticJsonDocument<1024> doc;
 
+    if (!q.equals("") && !q.equals("temp") && !q.equals("pres") && !q.equals("humi")) {
+        m_server->send(400, "text/plain", ERR_INVALID_Q);
+        return;
+    }
+
+    if (q.equals("") || q.equals("temp"))
+        doc["temp"] = String(m_sensors->temp());
+
+    if (q.equals("") || q.equals("pres"))
+        doc["pres"] = String(m_sensors->pres());
+
+    if (q.equals("") || q.equals("humi"))
+        doc["humi"] = String(m_sensors->humi());
+
+    String json;
+    serializeJsonPretty(doc, json);
+
+    m_server->send(200, "application/json", json);
+}
 void HttpHandlers::handleGetSettings() {
     if (!m_storage->exists(SETTINGS_FILE)) {
         m_server->send(404, "text/plain", "not found");
@@ -169,6 +179,19 @@ void HttpHandlers::handleGetSettings() {
     }
 
     m_server->send(200, "application/json", m_storage->readAll(SETTINGS_FILE));
+}
+void HttpHandlers::handleDelSettings() {
+    if (!m_storage->exists(SETTINGS_FILE)) {
+        m_server->send(404, "text/plain", "not found");
+        return;
+    }
+
+    if (!m_storage->remove(SETTINGS_FILE)) {
+        m_server->send(500, "text/plain", ERR_GENERIC);
+        return;        
+    }
+
+    handleRestart();
 }
 
 void HttpHandlers::handleGetBootstrapCSS() {
@@ -180,7 +203,6 @@ void HttpHandlers::handleGetBootstrapCSS() {
     m_server->streamFile(file, "text/css");
     file.close();
 }
-
 void HttpHandlers::handleGetBootstrapJS() {
     File file = LittleFS.open("/wwwroot/bootstrap.bundle.min.js.gz");
     if (!file) {
@@ -190,12 +212,9 @@ void HttpHandlers::handleGetBootstrapJS() {
     m_server->streamFile(file, "text/js");
     file.close();
 }
-
 void HttpHandlers::handleGetNotFound() {
-    Serial.println("not found?");
     String html = m_storage->readAll("/wwwroot/error.html");
     html.replace("{error_description}", "Resource not found");
-    Serial.println(html);
     m_server->send(404, "text/html", html);
 }
 
@@ -266,24 +285,18 @@ void HttpHandlers::handleUpdSettingsWiFi() {
     m_server->send(200, "text/plain", MSG_OK);
 }
 void HttpHandlers::handleDelSettingsWiFi() {
-    String body = m_server->arg("plain");
-    if (body.equals("")) {
+    String ssid = m_server->arg("ap");
+    if (ssid.equals("")) {
         m_server->send(400, "text/plain", ERR_WIFI_AP_IS_EMPTY);
         return;
     }
 
-    wifiAP_t newWiFiAP = parseWiFiBody(body);
-    if (newWiFiAP.ssid.equals("")) {
-        m_server->send(400, "text/plain", ERR_WIFI_AP_IS_EMPTY);
-        return;
-    }
-
-    if (!m_settings->ssidExists(newWiFiAP.ssid)) {
+    if (!m_settings->ssidExists(ssid)) {
         m_server->send(404, "text/plain", ERR_WIFI_AP_NOT_FOUND);
         return;
     }
 
-    m_settings->delWifiAP(newWiFiAP.ssid.c_str());
+    m_settings->delWifiAP(ssid.c_str());
     if (!m_settings->saveSettings()) {
         m_server->send(500, "text/plain", ERR_GENERIC);
         return;        
@@ -331,7 +344,7 @@ void HttpHandlers::handleUpdSettingsMQTT() {
     m_server->send(200, "text/plain", MSG_OK);
 }
 void HttpHandlers::handleGetSettingsMQTTCert() {
-    m_server->send(200, "text/html", m_settings->getSettings().mqtt.ca_cert);
+    m_server->send(200, "text/plain", m_settings->getSettings().mqtt.ca_cert);
 }
 
 void HttpHandlers::handleGetSettingsLogger() {
@@ -392,20 +405,6 @@ void HttpHandlers::handleUpdSettingsDate() {
     m_server->send(200, "text/plain", MSG_OK);
 }
 
-void HttpHandlers::handleDelSettings() {
-    if (!m_storage->exists(SETTINGS_FILE)) {
-        m_server->send(404, "text/plain", "not found");
-        return;
-    }
-
-    if (!m_storage->remove(SETTINGS_FILE)) {
-        m_server->send(500, "text/plain", ERR_GENERIC);
-        return;        
-    }
-
-    handleRestart();
-}
-
 void HttpHandlers::handleGetAdmin() {
     String html = getHeaderHTML("admin");
     html += getAdminHTML();
@@ -420,9 +419,9 @@ void HttpHandlers::defineRoutes() {
     m_server->on("/logs", HTTP_GET, downloadLogs);
     m_server->on("/logs", HTTP_DELETE, deleteLogs);
     m_server->on("/restart", HTTP_POST, restart);
-
-    // TODO: When wifi settings is fully implemented, redirect to wifi settings handler.
+    m_server->on("/measures", HTTP_GET, getMeasures);
     m_server->on("/settings", HTTP_GET, getSettings);
+    m_server->on("/settings", HTTP_DELETE, delSettings);
 
     m_server->on("/bootstrap.min.css", HTTP_GET, getBootstrapCSS);
     m_server->on("/bootstrap.bundle.min.js", HTTP_GET, getBootstrapJS);
@@ -441,8 +440,6 @@ void HttpHandlers::defineRoutes() {
 
     m_server->on("/settings/date", HTTP_GET, getSettingsDate);
     m_server->on("/settings/date", HTTP_PUT, updSettingsDate);
-
-    m_server->on("/settings", HTTP_DELETE, delSettings);
 
     m_server->on("/admin", HTTP_GET, getAdmin);
 

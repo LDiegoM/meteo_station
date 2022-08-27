@@ -1,8 +1,7 @@
 function executeDeleteAP(ap) {
     var ok = true;
     if (ap != "") {
-        const body = '{"ap":"' + ap + '"}';
-        executeCall("/settings/wifi", "DELETE", body).then((callOK) => {
+        executeCall("/settings/wifi?ap=" + ap, "DELETE").then((callOK) => {
             ok = callOK;
         });
     }
