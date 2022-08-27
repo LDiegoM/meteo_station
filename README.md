@@ -81,6 +81,8 @@ Meteo_station is an open source project by Diego M. Lopez that is licensed under
 
 ## Unreleased
 
+## 1.1.0 - 2022-08-27
+
 - Fix MQTT reconnection using char* variable for certificate.
 - Rename MqttHandlers class.
 - Change HTTP Delete WiFi AP handler to receive ssid from URI.
