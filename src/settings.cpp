@@ -43,11 +43,11 @@ settings_t Settings::getSettings() {
 }
 
 bool Settings::saveSettings() {
-    m_storage->remove(SETTINGS_FILE);
     String json = createJson();
     if (json.equals(""))
         return false;
     
+    m_storage->remove(SETTINGS_FILE);
     return m_storage->writeFile(SETTINGS_FILE, json.c_str());
 }
 
